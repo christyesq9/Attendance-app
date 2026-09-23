@@ -2590,7 +2590,30 @@ function openBulkEntry() {
 
   container.innerHTML = "";
 
-  employees.forEach(
+  /* ==========================================
+     一括入力には「有効」スタッフだけ表示
+  ========================================== */
+
+  const activeEmployees =
+    employees.filter(
+      employee =>
+        employee.active === true
+    );
+
+  if (!activeEmployees.length) {
+
+    container.innerHTML =
+      `<div class="empty">
+        有効なスタッフが登録されていません。
+      </div>`;
+
+    modal.classList.remove("hidden");
+
+    return;
+
+  }
+
+  activeEmployees.forEach(
     employee => {
 
       const existing =
@@ -2602,17 +2625,23 @@ function openBulkEntry() {
 
       const clockIn =
         existing
-          ? isoToJapanInput(existing.clock_in)
+          ? isoToJapanInput(
+              existing.clock_in
+            )
           : "";
 
       const clockOut =
         existing && existing.clock_out
-          ? isoToJapanInput(existing.clock_out)
+          ? isoToJapanInput(
+              existing.clock_out
+            )
           : "";
 
       const breakMinutes =
         existing
-          ? Number(existing.break_minutes || 0)
+          ? Number(
+              existing.break_minutes || 0
+            )
           : 60;
 
       const div =
@@ -2626,18 +2655,10 @@ function openBulkEntry() {
         <div class="bulk-row-header">
 
           <strong>
-            ${escapeHtml(employee.name)}
+            ${escapeHtml(
+              employee.name
+            )}
           </strong>
-
-          ${
-            employee.active === false
-              ? `
-                <span class="badge badge-inactive">
-                  無効
-                </span>
-                `
-              : ""
-          }
 
         </div>
 
@@ -2702,16 +2723,6 @@ function openBulkEntry() {
   modal.classList.remove("hidden");
 
 }
-
-
-function closeBulkModal() {
-
-  document.getElementById(
-    "bulkModal"
-  ).classList.add("hidden");
-
-}
-
 
 /* =====================================================
    SAVE BULK ENTRY
