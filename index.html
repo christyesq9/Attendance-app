@@ -359,7 +359,6 @@ label {
 }
 
 @media (max-width: 500px) {
-
   .container {
     padding: 12px;
   }
@@ -392,16 +391,13 @@ label {
 
 <div class="container">
 
-<!-- =====================================================
-     STAFF HOME
-===================================================== -->
-
+<!-- STAFF HOME -->
 <div id="nameScreen">
 
   <div class="card center">
-
     <h1>出退勤管理</h1>
-
+   <p>Sugar Tree Okinawa</p>
+    
     <div id="currentTime" class="big-time">
       --:--:--
     </div>
@@ -409,36 +405,28 @@ label {
     <div id="currentDate" class="date-text">
       ----年--月--日
     </div>
-
   </div>
 
   <div class="card">
-
     <h2>スタッフを選択</h2>
 
     <div id="staffList" class="staff-grid">
       読み込み中...
     </div>
-
   </div>
 
   <div class="card center">
-
     <button
       class="secondary"
       onclick="openManagerLogin()">
       管理者画面
     </button>
-
   </div>
 
 </div>
 
 
-<!-- =====================================================
-     STAFF ATTENDANCE
-===================================================== -->
-
+<!-- STAFF ATTENDANCE -->
 <div id="attendanceScreen" class="hidden">
 
   <div class="card center">
@@ -488,10 +476,7 @@ label {
 </div>
 
 
-<!-- =====================================================
-     MANAGER LOGIN
-===================================================== -->
-
+<!-- MANAGER LOGIN -->
 <div id="managerLoginScreen" class="hidden">
 
   <div class="card">
@@ -527,10 +512,7 @@ label {
 </div>
 
 
-<!-- =====================================================
-     MANAGER SCREEN
-===================================================== -->
-
+<!-- MANAGER SCREEN -->
 <div id="managerScreen" class="hidden">
 
   <div class="card">
@@ -573,10 +555,7 @@ label {
   </div>
 
 
-<!-- =====================================================
-     DAILY
-===================================================== -->
-
+<!-- DAILY -->
 <div id="dailyTab">
 
   <div class="card">
@@ -618,7 +597,6 @@ label {
 
   </div>
 
-
   <div class="card">
 
     <h3>勤務状況</h3>
@@ -632,10 +610,7 @@ label {
 </div>
 
 
-<!-- =====================================================
-     PAYROLL
-===================================================== -->
-
+<!-- PAYROLL -->
 <div id="payrollTab" class="hidden">
 
   <div class="card">
@@ -668,10 +643,7 @@ label {
 </div>
 
 
-<!-- =====================================================
-     EMPLOYEE MANAGEMENT
-===================================================== -->
-
+<!-- EMPLOYEE MANAGEMENT -->
 <div id="employeesTab" class="hidden">
 
   <div class="card">
@@ -701,7 +673,6 @@ label {
 
   </div>
 
-
   <div class="card">
 
     <h3>スタッフ一覧</h3>
@@ -719,13 +690,8 @@ label {
 </div>
 
 
-<!-- =====================================================
-     EDIT ATTENDANCE MODAL
-===================================================== -->
-
-<div
-  id="editModal"
-  class="modal hidden">
+<!-- EDIT ATTENDANCE MODAL -->
+<div id="editModal" class="modal hidden">
 
   <div class="modal-content">
 
@@ -782,13 +748,8 @@ label {
 </div>
 
 
-<!-- =====================================================
-     EDIT EMPLOYEE MODAL
-===================================================== -->
-
-<div
-  id="employeeModal"
-  class="modal hidden">
+<!-- EDIT EMPLOYEE MODAL -->
+<div id="employeeModal" class="modal hidden">
 
   <div class="modal-content">
 
@@ -852,13 +813,9 @@ const MANAGER_PIN = "1234";
 ===================================================== */
 
 let employees = [];
-
 let attendanceRecords = [];
-
 let selectedEmployee = null;
-
 let managerSelectedDate = getJapanDate();
-
 let payrollData = [];
 
 
@@ -897,7 +854,6 @@ async function supabaseRequest(
 
   };
 
-
   if (body !== null) {
 
     options.body =
@@ -905,38 +861,99 @@ async function supabaseRequest(
 
   }
 
-
   const response =
     await fetch(
       url,
       options
     );
 
+  const text =
+    await response.text();
 
   if (!response.ok) {
 
-    const errorText =
-      await response.text();
-
     console.error(
       "Supabase error:",
-      errorText
+      text
     );
 
     throw new Error(
-      errorText
+      text || `HTTP ${response.status}`
     );
 
   }
 
+  if (!text) {
+    return [];
+  }
 
-  const text =
-    await response.text();
+  try {
+
+    return JSON.parse(text);
+
+  } catch {
+
+    return [];
+
+  }
+
+}
 
 
-  return text
-    ? JSON.parse(text)
-    : [];
+/* =====================================================
+   VERIFY EMPLOYEE UPDATE
+===================================================== */
+
+async function verifyEmployee(
+  employeeId,
+  expectedValues
+) {
+
+  const result =
+    await supabaseRequest(
+      "employees",
+      "GET",
+      `?select=*&id=eq.${encodeURIComponent(employeeId)}`
+    );
+
+  if (
+    !Array.isArray(result) ||
+    result.length === 0
+  ) {
+
+    throw new Error(
+      "スタッフ情報がデータベースで確認できませんでした。"
+    );
+
+  }
+
+  const employee =
+    result[0];
+
+  for (
+    const key of Object.keys(expectedValues)
+  ) {
+
+    const expected =
+      expectedValues[key];
+
+    const actual =
+      employee[key];
+
+    if (
+      String(actual) !==
+      String(expected)
+    ) {
+
+      throw new Error(
+        `データベースの${key}が正しく更新されていません。`
+      );
+
+    }
+
+  }
+
+  return employee;
 
 }
 
@@ -979,10 +996,7 @@ function getJapanDateTimeParts() {
         second: "2-digit",
         hour12: false
       }
-    ).formatToParts(
-      new Date()
-    );
-
+    ).formatToParts(new Date());
 
   const result = {};
 
@@ -1047,7 +1061,6 @@ function isoToJapanInput(iso) {
   const date =
     new Date(iso);
 
-
   const parts =
     new Intl.DateTimeFormat(
       "en-CA",
@@ -1061,7 +1074,6 @@ function isoToJapanInput(iso) {
         hour12: false
       }
     ).formatToParts(date);
-
 
   const p = {};
 
@@ -1080,7 +1092,6 @@ function isoToJapanInput(iso) {
     }
   );
 
-
   return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}`;
 
 }
@@ -1098,30 +1109,25 @@ function updateClock() {
   const date =
     getJapanDateString();
 
-
   document.getElementById(
     "currentTime"
   ).textContent =
     time;
-
 
   document.getElementById(
     "currentDate"
   ).textContent =
     date;
 
-
   document.getElementById(
     "attendanceTime"
   ).textContent =
     time;
 
-
   document.getElementById(
     "attendanceDate"
   ).textContent =
     date;
-
 
   updateWorkingTime();
 
@@ -1149,7 +1155,6 @@ async function loadEmployees() {
         "?select=*&order=name.asc"
       );
 
-
     renderStaffList();
 
   } catch (error) {
@@ -1169,8 +1174,8 @@ async function loadEmployees() {
 
 
 /* =====================================================
-   STAFF HOME LIST
-   ONLY ACTIVE STAFF
+   STAFF HOME
+   ACTIVE ONLY
 ===================================================== */
 
 function renderStaffList() {
@@ -1180,23 +1185,11 @@ function renderStaffList() {
       "staffList"
     );
 
-
-  /*
-   IMPORTANT:
-
-   Only active === true
-   will appear on homepage.
-
-   false / null / undefined
-   will NOT appear.
-  */
-
   const activeEmployees =
     employees.filter(
       employee =>
         employee.active === true
     );
-
 
   if (
     activeEmployees.length === 0
@@ -1211,9 +1204,7 @@ function renderStaffList() {
 
   }
 
-
   list.innerHTML = "";
-
 
   activeEmployees.forEach(
     employee => {
@@ -1223,21 +1214,17 @@ function renderStaffList() {
           "button"
         );
 
-
       button.className =
         "staff-button";
 
-
       button.textContent =
         employee.name;
-
 
       button.onclick =
         () =>
           selectEmployee(
             employee
           );
-
 
       list.appendChild(
         button
@@ -1257,12 +1244,6 @@ async function selectEmployee(
   employee
 ) {
 
-  /*
-   Safety check:
-   Don't allow inactive staff
-   to enter attendance screen.
-  */
-
   if (
     employee.active !== true
   ) {
@@ -1277,10 +1258,8 @@ async function selectEmployee(
 
   }
 
-
   selectedEmployee =
     employee;
-
 
   document.getElementById(
     "nameScreen"
@@ -1288,19 +1267,16 @@ async function selectEmployee(
     "hidden"
   );
 
-
   document.getElementById(
     "attendanceScreen"
   ).classList.remove(
     "hidden"
   );
 
-
   document.getElementById(
     "selectedStaffName"
   ).textContent =
     employee.name;
-
 
   await loadTodayAttendance();
 
@@ -1308,7 +1284,7 @@ async function selectEmployee(
 
 
 /* =====================================================
-   LOAD TODAY
+   LOAD TODAY ATTENDANCE
 ===================================================== */
 
 async function loadTodayAttendance() {
@@ -1317,10 +1293,8 @@ async function loadTodayAttendance() {
     !selectedEmployee
   ) return;
 
-
   const date =
     getJapanDate();
-
 
   try {
 
@@ -1331,10 +1305,8 @@ async function loadTodayAttendance() {
         `?select=*&employee_id=eq.${selectedEmployee.id}&work_date=eq.${date}&order=clock_in.desc`
       );
 
-
     attendanceRecords =
       records;
-
 
     updateAttendanceStatus();
 
@@ -1384,32 +1356,25 @@ function updateAttendanceStatus() {
       "attendanceStatus"
     );
 
-
   const clockInButton =
     document.getElementById(
       "clockInButton"
     );
-
 
   const clockOutButton =
     document.getElementById(
       "clockOutButton"
     );
 
-
   const record =
     getCurrentAttendanceRecord();
-
 
   if (!record) {
 
     status.innerHTML =
-      `
-      <div>
+      `<div>
         本日はまだ出勤していません。
-      </div>
-      `;
-
+      </div>`;
 
     clockInButton.disabled =
       false;
@@ -1420,7 +1385,6 @@ function updateAttendanceStatus() {
     return;
 
   }
-
 
   if (
     record.clock_in &&
@@ -1441,20 +1405,17 @@ function updateAttendanceStatus() {
       </div>
       `;
 
-
     clockInButton.disabled =
       true;
 
     clockOutButton.disabled =
       false;
 
-
     updateWorkingTime();
 
     return;
 
   }
-
 
   if (
     record.clock_in &&
@@ -1466,7 +1427,6 @@ function updateAttendanceStatus() {
         record
       );
 
-
     status.innerHTML =
       `
       <div class="success-text">
@@ -1475,16 +1435,12 @@ function updateAttendanceStatus() {
 
       <div class="work-summary">
         出勤：
-        ${formatDateTime(
-          record.clock_in
-        )}
+        ${formatDateTime(record.clock_in)}
       </div>
 
       <div class="work-summary">
         退勤：
-        ${formatDateTime(
-          record.clock_out
-        )}
+        ${formatDateTime(record.clock_out)}
       </div>
 
       <div class="work-summary">
@@ -1494,12 +1450,9 @@ function updateAttendanceStatus() {
 
       <div class="working-time">
         実働：
-        ${formatWorkMinutes(
-          minutes
-        )}
+        ${formatWorkMinutes(minutes)}
       </div>
       `;
-
 
     clockInButton.disabled =
       true;
@@ -1522,11 +1475,6 @@ async function clockIn() {
     !selectedEmployee
   ) return;
 
-
-  /*
-   Extra safety check
-  */
-
   if (
     selectedEmployee.active !== true
   ) {
@@ -1537,16 +1485,12 @@ async function clockIn() {
 
     backToStaffSelection();
 
-    await loadEmployees();
-
     return;
 
   }
 
-
   const existing =
     getCurrentAttendanceRecord();
-
 
   if (existing) {
 
@@ -1558,7 +1502,6 @@ async function clockIn() {
 
   }
 
-
   try {
 
     await supabaseRequest(
@@ -1566,7 +1509,6 @@ async function clockIn() {
       "POST",
       "",
       {
-
         employee_id:
           selectedEmployee.id,
 
@@ -1581,10 +1523,8 @@ async function clockIn() {
 
         break_minutes:
           0
-
       }
     );
-
 
     await loadTodayAttendance();
 
@@ -1609,9 +1549,7 @@ async function clockOut() {
   const record =
     getCurrentAttendanceRecord();
 
-
   if (!record) return;
-
 
   if (
     record.clock_out
@@ -1625,13 +1563,11 @@ async function clockOut() {
 
   }
 
-
   const breakInput =
     prompt(
       "休憩時間を入力してください（分）",
       record.break_minutes || "0"
     );
-
 
   if (
     breakInput === null
@@ -1641,12 +1577,8 @@ async function clockOut() {
 
   }
 
-
   const breakMinutes =
-    Number(
-      breakInput
-    );
-
+    Number(breakInput);
 
   if (
     isNaN(breakMinutes) ||
@@ -1661,7 +1593,6 @@ async function clockOut() {
 
   }
 
-
   try {
 
     await supabaseRequest(
@@ -1669,16 +1600,13 @@ async function clockOut() {
       "PATCH",
       `?id=eq.${record.id}`,
       {
-
         clock_out:
           new Date().toISOString(),
 
         break_minutes:
           breakMinutes
-
       }
     );
-
 
     await loadTodayAttendance();
 
@@ -1704,10 +1632,8 @@ function updateWorkingTime() {
     !selectedEmployee
   ) return;
 
-
   const record =
     getCurrentAttendanceRecord();
-
 
   if (
     !record ||
@@ -1719,25 +1645,20 @@ function updateWorkingTime() {
 
   }
 
-
   const minutes =
     calculateWorkMinutes(
       record
     );
-
 
   const element =
     document.getElementById(
       "liveWorkingTime"
     );
 
-
   if (element) {
 
     element.textContent =
-      formatWorkMinutes(
-        minutes
-      );
+      formatWorkMinutes(minutes);
 
   }
 
@@ -1761,34 +1682,25 @@ function calculateWorkMinutes(
 
   }
 
-
   const start =
     new Date(
       record.clock_in
     );
 
-
   const end =
     record.clock_out
-      ? new Date(
-          record.clock_out
-        )
+      ? new Date(record.clock_out)
       : new Date();
-
 
   let minutes =
     Math.floor(
-      (
-        end - start
-      ) / 60000
+      (end - start) / 60000
     );
-
 
   minutes -=
     Number(
       record.break_minutes || 0
     );
-
 
   return Math.max(
     0,
@@ -1812,16 +1724,13 @@ function formatWorkMinutes(
       Math.floor(minutes)
     );
 
-
   const hours =
     Math.floor(
       minutes / 60
     );
 
-
   const mins =
     minutes % 60;
-
 
   return `${hours}時間${String(
     mins
@@ -1842,7 +1751,6 @@ function formatDateTime(
 ) {
 
   if (!iso) return "-";
-
 
   return new Date(
     iso
@@ -1881,6 +1789,8 @@ function backToStaffSelection() {
   selectedEmployee =
     null;
 
+  attendanceRecords =
+    [];
 
   document.getElementById(
     "attendanceScreen"
@@ -1888,13 +1798,11 @@ function backToStaffSelection() {
     "hidden"
   );
 
-
   document.getElementById(
     "managerLoginScreen"
   ).classList.add(
     "hidden"
   );
-
 
   document.getElementById(
     "managerScreen"
@@ -1902,13 +1810,11 @@ function backToStaffSelection() {
     "hidden"
   );
 
-
   document.getElementById(
     "nameScreen"
   ).classList.remove(
     "hidden"
   );
-
 
   loadEmployees();
 
@@ -1927,13 +1833,11 @@ function openManagerLogin() {
     "hidden"
   );
 
-
   document.getElementById(
     "managerLoginScreen"
   ).classList.remove(
     "hidden"
   );
-
 
   document.getElementById(
     "managerPinInput"
@@ -1949,7 +1853,6 @@ function managerLogin() {
       "managerPinInput"
     ).value;
 
-
   if (
     pin !== MANAGER_PIN
   ) {
@@ -1962,13 +1865,11 @@ function managerLogin() {
 
   }
 
-
   document.getElementById(
     "managerLoginScreen"
   ).classList.add(
     "hidden"
   );
-
 
   document.getElementById(
     "managerScreen"
@@ -1976,12 +1877,10 @@ function managerLogin() {
     "hidden"
   );
 
-
   document.getElementById(
     "managerDatePicker"
   ).value =
     managerSelectedDate;
-
 
   document.getElementById(
     "payrollMonth"
@@ -1990,7 +1889,6 @@ function managerLogin() {
       0,
       7
     );
-
 
   loadManagerData();
 
@@ -2005,19 +1903,16 @@ function managerLogout() {
     "hidden"
   );
 
-
   document.getElementById(
     "managerPinInput"
   ).value =
     "";
-
 
   document.getElementById(
     "nameScreen"
   ).classList.remove(
     "hidden"
   );
-
 
   loadEmployees();
 
@@ -2038,13 +1933,11 @@ function showManagerTab(
     "hidden"
   );
 
-
   document.getElementById(
     "payrollTab"
   ).classList.add(
     "hidden"
   );
-
 
   document.getElementById(
     "employeesTab"
@@ -2052,13 +1945,11 @@ function showManagerTab(
     "hidden"
   );
 
-
   document.getElementById(
     "dailyTabButton"
   ).classList.remove(
     "active"
   );
-
 
   document.getElementById(
     "payrollTabButton"
@@ -2066,17 +1957,13 @@ function showManagerTab(
     "active"
   );
 
-
   document.getElementById(
     "employeeTabButton"
   ).classList.remove(
     "active"
   );
 
-
-  if (
-    tab === "daily"
-  ) {
+  if (tab === "daily") {
 
     document.getElementById(
       "dailyTab"
@@ -2084,22 +1971,17 @@ function showManagerTab(
       "hidden"
     );
 
-
     document.getElementById(
       "dailyTabButton"
     ).classList.add(
       "active"
     );
 
-
     loadManagerData();
 
   }
 
-
-  if (
-    tab === "payroll"
-  ) {
+  if (tab === "payroll") {
 
     document.getElementById(
       "payrollTab"
@@ -2107,22 +1989,17 @@ function showManagerTab(
       "hidden"
     );
 
-
     document.getElementById(
       "payrollTabButton"
     ).classList.add(
       "active"
     );
 
-
     loadPayroll();
 
   }
 
-
-  if (
-    tab === "employees"
-  ) {
+  if (tab === "employees") {
 
     document.getElementById(
       "employeesTab"
@@ -2130,13 +2007,11 @@ function showManagerTab(
       "hidden"
     );
 
-
     document.getElementById(
       "employeeTabButton"
     ).classList.add(
       "active"
     );
-
 
     loadEmployeeAdmin();
 
@@ -2159,22 +2034,18 @@ function changeManagerDate(
       "T00:00:00"
     );
 
-
   date.setDate(
     date.getDate() + days
   );
-
 
   managerSelectedDate =
     date.toISOString()
       .split("T")[0];
 
-
   document.getElementById(
     "managerDatePicker"
   ).value =
     managerSelectedDate;
-
 
   loadManagerData();
 
@@ -2193,7 +2064,6 @@ async function loadManagerData() {
     ).value ||
     managerSelectedDate;
 
-
   try {
 
     employees =
@@ -2203,14 +2073,12 @@ async function loadManagerData() {
         "?select=*&order=name.asc"
       );
 
-
     attendanceRecords =
       await supabaseRequest(
         "attendance",
         "GET",
         `?select=*&work_date=eq.${managerSelectedDate}&order=clock_in.asc`
       );
-
 
     renderDailyAttendance();
 
@@ -2241,7 +2109,6 @@ function renderDailyAttendance() {
       "dailyAttendanceList"
     );
 
-
   if (
     !employees.length
   ) {
@@ -2255,10 +2122,8 @@ function renderDailyAttendance() {
 
   }
 
-
   container.innerHTML =
     "";
-
 
   employees.forEach(
     employee => {
@@ -2266,14 +2131,9 @@ function renderDailyAttendance() {
       const records =
         attendanceRecords.filter(
           record =>
-            String(
-              record.employee_id
-            ) ===
-            String(
-              employee.id
-            )
+            String(record.employee_id) ===
+            String(employee.id)
         );
-
 
       if (
         !records.length
@@ -2284,42 +2144,34 @@ function renderDailyAttendance() {
             "div"
           );
 
-
         row.className =
           "attendance-row";
 
-
         row.innerHTML =
           `
-
           <div class="attendance-row-header">
 
             <div>
 
               <span class="employee-name">
-                ${escapeHtml(
-                  employee.name
-                )}
+                ${escapeHtml(employee.name)}
               </span>
 
               ${
                 employee.active === false
-
-                ? `
-                  <span class="badge badge-inactive">
-                    無効
-                  </span>
-                  `
-
-                : `
-                  <span class="badge badge-active">
-                    有効
-                  </span>
-                  `
+                  ? `
+                    <span class="badge badge-inactive">
+                      無効
+                    </span>
+                    `
+                  : `
+                    <span class="badge badge-active">
+                      有効
+                    </span>
+                    `
               }
 
             </div>
-
 
             <button
               class="secondary small-btn"
@@ -2333,23 +2185,18 @@ function renderDailyAttendance() {
 
           </div>
 
-
           <div class="work-summary">
             勤務記録なし
           </div>
-
           `;
-
 
         container.appendChild(
           row
         );
 
-
         return;
 
       }
-
 
       records.forEach(
         record => {
@@ -2359,66 +2206,52 @@ function renderDailyAttendance() {
               "div"
             );
 
-
           row.className =
             "attendance-row";
 
-
           const minutes =
             record.clock_out
-              ? calculateWorkMinutes(
-                  record
-                )
+              ? calculateWorkMinutes(record)
               : 0;
-
 
           const hourlyRate =
             Number(
               employee.hourly_rate || 0
             );
 
-
           const pay =
             record.clock_out
               ? Math.round(
-                  minutes /
-                  60 *
+                  minutes / 60 *
                   hourlyRate
                 )
               : 0;
 
-
           row.innerHTML =
             `
-
             <div class="attendance-row-header">
 
               <div>
 
                 <span class="employee-name">
-                  ${escapeHtml(
-                    employee.name
-                  )}
+                  ${escapeHtml(employee.name)}
                 </span>
 
                 ${
                   employee.active === false
-
-                  ? `
-                    <span class="badge badge-inactive">
-                      無効
-                    </span>
-                    `
-
-                  : `
-                    <span class="badge badge-active">
-                      有効
-                    </span>
-                    `
+                    ? `
+                      <span class="badge badge-inactive">
+                        無効
+                      </span>
+                      `
+                    : `
+                      <span class="badge badge-active">
+                        有効
+                      </span>
+                      `
                 }
 
               </div>
-
 
               <button
                 class="secondary small-btn"
@@ -2432,52 +2265,37 @@ function renderDailyAttendance() {
 
             </div>
 
-
             <div class="work-summary">
               出勤：
-              ${formatDateTime(
-                record.clock_in
-              )}
+              ${formatDateTime(record.clock_in)}
             </div>
-
 
             <div class="work-summary">
               退勤：
               ${
                 record.clock_out
-
-                ? formatDateTime(
-                    record.clock_out
-                  )
-
-                : `
-                  <span class="warning-text">
-                    未退勤
-                  </span>
-                  `
+                  ? formatDateTime(record.clock_out)
+                  : `
+                    <span class="warning-text">
+                      未退勤
+                    </span>
+                    `
               }
             </div>
-
 
             <div class="work-summary">
               休憩：
               ${record.break_minutes || 0}分
             </div>
 
-
             <div class="work-summary">
               実働：
               ${
                 record.clock_out
-
-                ? formatWorkMinutes(
-                    minutes
-                  )
-
-                : "未計算"
+                  ? formatWorkMinutes(minutes)
+                  : "未計算"
               }
             </div>
-
 
             <div class="pay">
 
@@ -2486,19 +2304,15 @@ function renderDailyAttendance() {
 
               ${
                 record.clock_out
-
-                ? `
-                  ／ 概算給与：
-                  ¥${pay.toLocaleString()}
-                  `
-
-                : ""
+                  ? `
+                    ／ 概算給与：
+                    ¥${pay.toLocaleString()}
+                    `
+                  : ""
               }
 
             </div>
-
             `;
-
 
           container.appendChild(
             row
@@ -2530,61 +2344,41 @@ function openEdit(
         String(recordId)
     );
 
-
   document.getElementById(
     "editEmployeeId"
   ).value =
     employeeId;
-
 
   document.getElementById(
     "editRecordId"
   ).value =
     recordId || "";
 
-
   document.getElementById(
     "editModalTitle"
   ).textContent =
     `${employeeName} 勤務記録`;
 
-
   document.getElementById(
     "editClockIn"
   ).value =
     record
-
-      ? isoToJapanInput(
-          record.clock_in
-        )
-
+      ? isoToJapanInput(record.clock_in)
       : `${managerSelectedDate}T09:00`;
-
 
   document.getElementById(
     "editClockOut"
   ).value =
-    record &&
-    record.clock_out
-
-      ? isoToJapanInput(
-          record.clock_out
-        )
-
+    record && record.clock_out
+      ? isoToJapanInput(record.clock_out)
       : "";
-
 
   document.getElementById(
     "editBreakMinutes"
   ).value =
     record
-
-      ? (
-          record.break_minutes || 0
-        )
-
+      ? (record.break_minutes || 0)
       : 0;
-
 
   document.getElementById(
     "editModal"
@@ -2617,24 +2411,20 @@ async function saveEdit() {
       "editEmployeeId"
     ).value;
 
-
   const recordId =
     document.getElementById(
       "editRecordId"
     ).value;
-
 
   const clockIn =
     document.getElementById(
       "editClockIn"
     ).value;
 
-
   const clockOut =
     document.getElementById(
       "editClockOut"
     ).value;
-
 
   const breakMinutes =
     Number(
@@ -2642,7 +2432,6 @@ async function saveEdit() {
         "editBreakMinutes"
       ).value || 0
     );
-
 
   if (!clockIn) {
 
@@ -2654,7 +2443,6 @@ async function saveEdit() {
 
   }
 
-
   if (clockOut) {
 
     const start =
@@ -2662,7 +2450,6 @@ async function saveEdit() {
 
     const end =
       new Date(clockOut);
-
 
     if (
       end <= start
@@ -2678,7 +2465,6 @@ async function saveEdit() {
 
   }
 
-
   if (
     breakMinutes < 0
   ) {
@@ -2691,7 +2477,6 @@ async function saveEdit() {
 
   }
 
-
   const data = {
 
     employee_id:
@@ -2701,17 +2486,11 @@ async function saveEdit() {
       managerSelectedDate,
 
     clock_in:
-      japanDateTimeToISO(
-        clockIn
-      ),
+      japanDateTimeToISO(clockIn),
 
     clock_out:
       clockOut
-
-        ? japanDateTimeToISO(
-            clockOut
-          )
-
+        ? japanDateTimeToISO(clockOut)
         : null,
 
     break_minutes:
@@ -2719,35 +2498,50 @@ async function saveEdit() {
 
   };
 
-
   try {
+
+    let result;
 
     if (recordId) {
 
-      await supabaseRequest(
-        "attendance",
-        "PATCH",
-        `?id=eq.${recordId}`,
-        data
-      );
+      result =
+        await supabaseRequest(
+          "attendance",
+          "PATCH",
+          `?id=eq.${recordId}`,
+          data
+        );
 
     } else {
 
-      await supabaseRequest(
-        "attendance",
-        "POST",
-        "",
-        data
+      result =
+        await supabaseRequest(
+          "attendance",
+          "POST",
+          "",
+          data
+        );
+
+    }
+
+    if (
+      !Array.isArray(result) ||
+      result.length === 0
+    ) {
+
+      throw new Error(
+        "勤務記録を保存できませんでした。Supabaseの権限を確認してください。"
       );
 
     }
 
-
     closeEditModal();
-
 
     await loadManagerData();
 
+    alert(
+      "勤務記録を保存しました。"
+    );
 
   } catch (error) {
 
@@ -2775,7 +2569,6 @@ async function loadEmployeeAdmin() {
         "GET",
         "?select=*&order=name.asc"
       );
-
 
     renderEmployeeAdminList();
 
@@ -2806,7 +2599,6 @@ function renderEmployeeAdminList() {
       "employeeAdminList"
     );
 
-
   const sorted =
     [...employees].sort(
       (a, b) => {
@@ -2814,22 +2606,12 @@ function renderEmployeeAdminList() {
         if (
           a.active === false &&
           b.active !== false
-        ) {
-
-          return 1;
-
-        }
-
+        ) return 1;
 
         if (
           a.active !== false &&
           b.active === false
-        ) {
-
-          return -1;
-
-        }
-
+        ) return -1;
 
         return a.name.localeCompare(
           b.name,
@@ -2838,7 +2620,6 @@ function renderEmployeeAdminList() {
 
       }
     );
-
 
   if (
     !sorted.length
@@ -2853,10 +2634,8 @@ function renderEmployeeAdminList() {
 
   }
 
-
   container.innerHTML =
     "";
-
 
   sorted.forEach(
     employee => {
@@ -2866,7 +2645,6 @@ function renderEmployeeAdminList() {
           "div"
         );
 
-
       div.className =
         "employee-admin" +
         (
@@ -2875,38 +2653,31 @@ function renderEmployeeAdminList() {
             : ""
         );
 
-
       div.innerHTML =
         `
-
         <div class="employee-admin-header">
 
           <div>
 
             <strong>
-              ${escapeHtml(
-                employee.name
-              )}
+              ${escapeHtml(employee.name)}
             </strong>
 
             ${
               employee.active === false
-
-              ? `
-                <span class="badge badge-inactive">
-                  無効
-                </span>
-                `
-
-              : `
-                <span class="badge badge-active">
-                  有効
-                </span>
-                `
+                ? `
+                  <span class="badge badge-inactive">
+                    無効
+                  </span>
+                  `
+                : `
+                  <span class="badge badge-active">
+                    有効
+                  </span>
+                  `
             }
 
           </div>
-
 
           <div>
 
@@ -2918,35 +2689,36 @@ function renderEmployeeAdminList() {
               編集
             </button>
 
-
             ${
               employee.active === false
-
-              ? `
-                <button
-                  class="success small-btn"
-                  onclick="reactivateEmployee(
-                    '${employee.id}'
-                  )">
-                  再有効化
-                </button>
-                `
-
-              : `
-                <button
-                  class="danger small-btn"
-                  onclick="deactivateEmployee(
-                    '${employee.id}'
-                  )">
-                  無効化
-                </button>
-                `
+                ? `
+                  <button
+                    class="success small-btn"
+                    onclick="reactivateEmployee(
+                      '${employee.id}'
+                    )">
+                    再有効化
+                  </button>
+                  `
+                : `
+                  <button
+                    class="danger small-btn"
+                    onclick="deactivateEmployee(
+                      '${employee.id}'
+                    )">
+                    無効化
+                  </button>
+                  `
             }
 
           </div>
 
         </div>
 
+        <div class="work-summary">
+          社員コード：
+          ${escapeHtml(employee.employee_code || "-")}
+        </div>
 
         <div class="work-summary">
 
@@ -2956,15 +2728,77 @@ function renderEmployeeAdminList() {
           ).toLocaleString()}
 
         </div>
-
         `;
-
 
       container.appendChild(
         div
       );
 
     }
+  );
+
+}
+
+
+/* =====================================================
+   GENERATE EMPLOYEE CODE
+   EMP001 / EMP002 / EMP003...
+===================================================== */
+
+async function generateEmployeeCode() {
+
+  const existing =
+    await supabaseRequest(
+      "employees",
+      "GET",
+      "?select=employee_code"
+    );
+
+  let maxNumber = 0;
+
+  existing.forEach(
+    employee => {
+
+      const code =
+        String(
+          employee.employee_code || ""
+        ).trim();
+
+      const match =
+        code.match(
+          /^EMP(\d+)$/
+        );
+
+      if (match) {
+
+        const number =
+          parseInt(
+            match[1],
+            10
+          );
+
+        if (
+          number > maxNumber
+        ) {
+
+          maxNumber =
+            number;
+
+        }
+
+      }
+
+    }
+  );
+
+  return (
+    "EMP" +
+    String(
+      maxNumber + 1
+    ).padStart(
+      3,
+      "0"
+    )
   );
 
 }
@@ -2981,14 +2815,12 @@ async function addEmployee() {
       "newEmployeeName"
     ).value.trim();
 
-
   const hourlyRate =
     Number(
       document.getElementById(
         "newEmployeeHourlyRate"
       ).value || 0
     );
-
 
   if (!name) {
 
@@ -3000,8 +2832,8 @@ async function addEmployee() {
 
   }
 
-
   if (
+    isNaN(hourlyRate) ||
     hourlyRate < 0
   ) {
 
@@ -3013,50 +2845,118 @@ async function addEmployee() {
 
   }
 
-
   try {
 
-    await supabaseRequest(
-      "employees",
-      "POST",
-      "",
+    /*
+     Generate employee code
+     automatically.
+    */
+
+    const employeeCode =
+      await generateEmployeeCode();
+
+    /*
+     Save employee.
+    */
+
+    const result =
+      await supabaseRequest(
+        "employees",
+        "POST",
+        "",
+        {
+
+          employee_code:
+            employeeCode,
+
+          name:
+            name,
+
+          active:
+            true,
+
+          hourly_rate:
+            hourlyRate
+
+        }
+      );
+
+    /*
+     Make sure Supabase
+     actually returned
+     the new employee.
+    */
+
+    if (
+      !Array.isArray(result) ||
+      result.length === 0
+    ) {
+
+      throw new Error(
+        "スタッフをデータベースに登録できませんでした。"
+      );
+
+    }
+
+    const newEmployee =
+      result[0];
+
+    /*
+     Verify the saved data.
+    */
+
+    await verifyEmployee(
+      newEmployee.id,
       {
+        employee_code:
+          employeeCode,
 
         name:
           name,
 
-        active:
-          true,
-
         hourly_rate:
-          hourlyRate
+          hourlyRate,
 
+        active:
+          true
       }
     );
 
+    /*
+     Clear form.
+    */
 
     document.getElementById(
       "newEmployeeName"
     ).value =
       "";
 
-
     document.getElementById(
       "newEmployeeHourlyRate"
     ).value =
       "";
 
+    /*
+     Reload everything.
+    */
 
     await loadEmployeeAdmin();
 
     await loadEmployees();
 
-
     alert(
-      "スタッフを追加しました。"
+      `スタッフを追加しました。\n\n` +
+      `社員コード：${employeeCode}\n` +
+      `スタッフ名：${name}\n` +
+      `時給：¥${hourlyRate.toLocaleString()}`
     );
 
   } catch (error) {
+
+    console.error(
+      "Add employee error:",
+      error
+    );
 
     alert(
       "スタッフ追加に失敗しました。\n" +
@@ -3083,27 +2983,22 @@ function openEmployeeEdit(
         String(employeeId)
     );
 
-
   if (!employee) return;
-
 
   document.getElementById(
     "editEmployeeAdminId"
   ).value =
     employee.id;
 
-
   document.getElementById(
     "editEmployeeName"
   ).value =
     employee.name;
 
-
   document.getElementById(
     "editEmployeeHourlyRate"
   ).value =
     employee.hourly_rate || 0;
-
 
   document.getElementById(
     "employeeModal"
@@ -3136,12 +3031,10 @@ async function saveEmployee() {
       "editEmployeeAdminId"
     ).value;
 
-
   const name =
     document.getElementById(
       "editEmployeeName"
     ).value.trim();
-
 
   const hourlyRate =
     Number(
@@ -3149,7 +3042,6 @@ async function saveEmployee() {
         "editEmployeeHourlyRate"
       ).value || 0
     );
-
 
   if (!name) {
 
@@ -3161,8 +3053,8 @@ async function saveEmployee() {
 
   }
 
-
   if (
+    isNaN(hourlyRate) ||
     hourlyRate < 0
   ) {
 
@@ -3174,38 +3066,83 @@ async function saveEmployee() {
 
   }
 
-
   try {
 
-    await supabaseRequest(
-      "employees",
-      "PATCH",
-      `?id=eq.${id}`,
-      {
+    /*
+     Update employee.
+    */
 
+    const result =
+      await supabaseRequest(
+        "employees",
+        "PATCH",
+        `?id=eq.${encodeURIComponent(id)}`,
+        {
+
+          name:
+            name,
+
+          hourly_rate:
+            hourlyRate
+
+        }
+      );
+
+    /*
+     Important:
+     Make sure Supabase actually
+     returned the updated row.
+    */
+
+    if (
+      !Array.isArray(result) ||
+      result.length === 0
+    ) {
+
+      throw new Error(
+        "スタッフ情報が更新されませんでした。SupabaseのRLS権限を確認してください。"
+      );
+
+    }
+
+    /*
+     Verify actual database value.
+    */
+
+    await verifyEmployee(
+      id,
+      {
         name:
           name,
 
         hourly_rate:
           hourlyRate
-
       }
     );
 
-
     closeEmployeeModal();
-
 
     await loadEmployeeAdmin();
 
     await loadEmployees();
 
+    /*
+     If we got here, the database
+     really contains the new wage.
+    */
 
     alert(
-      "スタッフ情報を更新しました。"
+      `スタッフ情報を更新しました。\n\n` +
+      `スタッフ名：${name}\n` +
+      `時給：¥${hourlyRate.toLocaleString()}`
     );
 
   } catch (error) {
+
+    console.error(
+      "Save employee error:",
+      error
+    );
 
     alert(
       "更新に失敗しました。\n" +
@@ -3232,9 +3169,7 @@ async function deactivateEmployee(
         String(employeeId)
     );
 
-
   if (!employee) return;
-
 
   const confirmed =
     confirm(
@@ -3243,77 +3178,57 @@ async function deactivateEmployee(
       `過去の勤務記録・給与データは残ります。`
     );
 
-
   if (!confirmed) {
-
     return;
-
   }
-
 
   try {
 
-    /*
-     IMPORTANT:
-     Save active=false to Supabase.
-    */
-
-    await supabaseRequest(
-      "employees",
-      "PATCH",
-      `?id=eq.${employeeId}`,
-      {
-        active: false
-      }
-    );
-
-
-    /*
-     Update local array immediately.
-    */
-
-    const localEmployee =
-      employees.find(
-        e =>
-          String(e.id) ===
-          String(employeeId)
+    const result =
+      await supabaseRequest(
+        "employees",
+        "PATCH",
+        `?id=eq.${encodeURIComponent(employeeId)}`,
+        {
+          active: false
+        }
       );
 
+    if (
+      !Array.isArray(result) ||
+      result.length === 0
+    ) {
 
-    if (localEmployee) {
-
-      localEmployee.active =
-        false;
+      throw new Error(
+        "スタッフを無効化できませんでした。SupabaseのRLS権限を確認してください。"
+      );
 
     }
 
-
     /*
-     Update manager screen.
+     Verify actual database.
     */
 
-    renderEmployeeAdminList();
-
-
-    /*
-     Update homepage.
-    */
-
-    renderStaffList();
-
+    await verifyEmployee(
+      employeeId,
+      {
+        active:
+          false
+      }
+    );
 
     /*
      Reload from database.
     */
 
-    await loadEmployees();
+    await loadEmployeeAdmin();
 
+    await loadEmployees();
 
     alert(
       `${employee.name} を無効化しました。\n\n` +
       `出勤画面から非表示になりました。`
     );
-
 
   } catch (error) {
 
@@ -3322,9 +3237,8 @@ async function deactivateEmployee(
       error
     );
 
-
     alert(
-      "無効化に失敗しました。\n\n" +
+      "無効化に失敗しました。\n" +
       error.message
     );
 
@@ -3348,51 +3262,47 @@ async function reactivateEmployee(
         String(employeeId)
     );
 
-
   if (!employee) return;
-
 
   try {
 
-    await supabaseRequest(
-      "employees",
-      "PATCH",
-      `?id=eq.${employeeId}`,
-      {
-        active: true
-      }
-    );
-
-
-    const localEmployee =
-      employees.find(
-        e =>
-          String(e.id) ===
-          String(employeeId)
+    const result =
+      await supabaseRequest(
+        "employees",
+        "PATCH",
+        `?id=eq.${encodeURIComponent(employeeId)}`,
+        {
+          active: true
+        }
       );
 
+    if (
+      !Array.isArray(result) ||
+      result.length === 0
+    ) {
 
-    if (localEmployee) {
-
-      localEmployee.active =
-        true;
+      throw new Error(
+        "スタッフを再有効化できませんでした。SupabaseのRLS権限を確認してください。"
+      );
 
     }
 
+    await verifyEmployee(
+      employeeId,
+      {
+        active:
+          true
+      }
+    );
 
-    renderEmployeeAdminList();
-
-    renderStaffList();
-
+    await loadEmployeeAdmin();
 
     await loadEmployees();
-
 
     alert(
       `${employee.name} を再有効化しました。\n\n` +
       `出勤画面に再表示されました。`
     );
-
 
   } catch (error) {
 
@@ -3401,9 +3311,8 @@ async function reactivateEmployee(
       error
     );
 
-
     alert(
-      "再有効化に失敗しました。\n\n" +
+      "再有効化に失敗しました。\n" +
       error.message
     );
 
@@ -3427,7 +3336,6 @@ async function loadPayroll() {
       7
     );
 
-
   try {
 
     const allEmployees =
@@ -3437,7 +3345,6 @@ async function loadPayroll() {
         "?select=*&order=name.asc"
       );
 
-
     const records =
       await supabaseRequest(
         "attendance",
@@ -3445,13 +3352,10 @@ async function loadPayroll() {
         `?select=*&work_date=gte.${month}-01&work_date=lt.${getNextMonth(month)}&order=work_date.asc`
       );
 
-
     payrollData = [];
-
 
     let totalPayroll =
       0;
-
 
     allEmployees.forEach(
       employee => {
@@ -3459,14 +3363,9 @@ async function loadPayroll() {
         const employeeRecords =
           records.filter(
             r =>
-              String(
-                r.employee_id
-              ) ===
-              String(
-                employee.id
-              )
+              String(r.employee_id) ===
+              String(employee.id)
           );
-
 
         if (
           !employeeRecords.length
@@ -3476,18 +3375,14 @@ async function loadPayroll() {
 
         }
 
-
         let totalMinutes =
           0;
-
 
         let workingDays =
           0;
 
-
         let incompleteDays =
           0;
-
 
         employeeRecords.forEach(
           record => {
@@ -3501,7 +3396,6 @@ async function loadPayroll() {
                 calculateWorkMinutes(
                   record
                 );
-
 
               workingDays++;
 
@@ -3519,12 +3413,10 @@ async function loadPayroll() {
           }
         );
 
-
         const hourlyRate =
           Number(
             employee.hourly_rate || 0
           );
-
 
         const estimatedPay =
           Math.round(
@@ -3533,10 +3425,8 @@ async function loadPayroll() {
             hourlyRate
           );
 
-
         totalPayroll +=
           estimatedPay;
-
 
         payrollData.push({
 
@@ -3563,12 +3453,10 @@ async function loadPayroll() {
       }
     );
 
-
     renderPayroll(
       month,
       totalPayroll
     );
-
 
   } catch (error) {
 
@@ -3602,7 +3490,6 @@ function getNextMonth(
       .split("-")
       .map(Number);
 
-
   const date =
     new Date(
       year,
@@ -3610,10 +3497,8 @@ function getNextMonth(
       1
     );
 
-
   const y =
     date.getFullYear();
-
 
   const m =
     String(
@@ -3622,7 +3507,6 @@ function getNextMonth(
       2,
       "0"
     );
-
 
   return `${y}-${m}-01`;
 
@@ -3643,10 +3527,8 @@ function renderPayroll(
       "payrollResult"
     );
 
-
   let html =
     `
-
     <div class="total-box">
 
       <div>
@@ -3662,13 +3544,10 @@ function renderPayroll(
       </div>
 
     </div>
-
     `;
-
 
   html +=
     `
-
     <div class="card">
 
       <div class="notice">
@@ -3688,9 +3567,7 @@ function renderPayroll(
       </div>
 
     </div>
-
     `;
-
 
   if (
     !payrollData.length
@@ -3698,29 +3575,23 @@ function renderPayroll(
 
     html +=
       `
-
       <div class="card empty">
         この月の勤務記録はありません。
       </div>
-
       `;
-
 
     container.innerHTML =
       html;
 
-
     return;
 
   }
-
 
   payrollData.forEach(
     item => {
 
       html +=
         `
-
         <div class="payroll-row">
 
           <div class="employee-name">
@@ -3731,18 +3602,15 @@ function renderPayroll(
 
             ${
               item.employee.active === false
-
-              ? `
-                <span class="badge badge-inactive">
-                  無効
-                </span>
-                `
-
-              : ""
+                ? `
+                  <span class="badge badge-inactive">
+                    無効
+                  </span>
+                  `
+                : ""
             }
 
           </div>
-
 
           <div class="payroll-grid">
 
@@ -3758,7 +3626,6 @@ function renderPayroll(
 
             </div>
 
-
             <div class="payroll-item">
 
               <div class="payroll-label">
@@ -3773,7 +3640,6 @@ function renderPayroll(
 
             </div>
 
-
             <div class="payroll-item">
 
               <div class="payroll-label">
@@ -3785,7 +3651,6 @@ function renderPayroll(
               </div>
 
             </div>
-
 
             <div class="payroll-item">
 
@@ -3801,35 +3666,30 @@ function renderPayroll(
 
           </div>
 
-
           ${
             item.incompleteDays > 0
+              ? `
+                <div
+                  class="warning-text"
+                  style="margin-top:10px;">
 
-            ? `
-              <div
-                class="warning-text"
-                style="margin-top:10px;">
+                  ⚠ 未退勤
+                  ${item.incompleteDays}件
 
-                ⚠ 未退勤
-                ${item.incompleteDays}件
+                  <br>
 
-                <br>
+                  （給与計算には含めていません）
 
-                （給与計算には含めていません）
-
-              </div>
-              `
-
-            : ""
+                </div>
+                `
+              : ""
           }
 
         </div>
-
         `;
 
     }
   );
-
 
   container.innerHTML =
     html;
@@ -3855,10 +3715,8 @@ function exportDailyCSV() {
 
   }
 
-
   let csv =
     "日付,スタッフ名,出勤,退勤,休憩,実働時間,時給,概算給与\n";
-
 
   attendanceRecords.forEach(
     record => {
@@ -3866,43 +3724,30 @@ function exportDailyCSV() {
       const employee =
         employees.find(
           e =>
-            String(
-              e.id
-            ) ===
-            String(
-              record.employee_id
-            )
+            String(e.id) ===
+            String(record.employee_id)
         );
-
 
       if (!employee) return;
 
-
       const minutes =
         record.clock_out
-          ? calculateWorkMinutes(
-              record
-            )
+          ? calculateWorkMinutes(record)
           : 0;
-
 
       const hourlyRate =
         Number(
           employee.hourly_rate || 0
         );
 
-
       const pay =
         record.clock_out
-
           ? Math.round(
               minutes /
               60 *
               hourlyRate
             )
-
           : 0;
-
 
       csv += [
 
@@ -3915,21 +3760,15 @@ function exportDailyCSV() {
         ),
 
         record.clock_out
-
           ? formatDateTime(
               record.clock_out
             )
-
           : "未退勤",
 
         record.break_minutes || 0,
 
         record.clock_out
-
-          ? formatWorkMinutes(
-              minutes
-            )
-
+          ? formatWorkMinutes(minutes)
           : "未計算",
 
         hourlyRate,
@@ -3943,7 +3782,6 @@ function exportDailyCSV() {
 
     }
   );
-
 
   downloadCSV(
     csv,
@@ -3971,16 +3809,13 @@ function exportPayrollCSV() {
 
   }
 
-
   const month =
     document.getElementById(
       "payrollMonth"
     ).value;
 
-
   let csv =
     "スタッフ名,勤務日数,実働時間,時給,概算給与,未退勤件数\n";
-
 
   payrollData.forEach(
     item => {
@@ -4009,7 +3844,6 @@ function exportPayrollCSV() {
     }
   );
 
-
   downloadCSV(
     csv,
     `給与計算_${month}.csv`
@@ -4031,7 +3865,6 @@ function csvEscape(
       value ?? ""
     );
 
-
   return `"${string.replace(
     /"/g,
     '""'
@@ -4048,7 +3881,6 @@ function downloadCSV(
   const bom =
     "\uFEFF";
 
-
   const blob =
     new Blob(
       [
@@ -4060,39 +3892,31 @@ function downloadCSV(
       }
     );
 
-
   const url =
     URL.createObjectURL(
       blob
     );
-
 
   const link =
     document.createElement(
       "a"
     );
 
-
   link.href =
     url;
 
-
   link.download =
     filename;
-
 
   document.body.appendChild(
     link
   );
 
-
   link.click();
-
 
   document.body.removeChild(
     link
   );
-
 
   URL.revokeObjectURL(
     url
