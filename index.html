@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>出退勤管理</title>
+I  <title>出退勤管理</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -267,13 +267,16 @@
         .order("id");
 
     if (error) {
-      console.error(error);
+  console.error(error);
 
-      document.getElementById("employees").innerHTML =
-        "<p>従業員情報を読み込めませんでした。</p>";
+  document.getElementById("employees").innerHTML =
+    "<p style='color:red;'>読み込みエラー：</p>" +
+    "<p style='font-size:14px;'>" +
+    error.message +
+    "</p>";
 
-      return;
-    }
+  return;
+}
 
     const container =
       document.getElementById("employees");
