@@ -3,19 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-I  <title>出退勤管理</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>出退勤管理</title>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans",
-                   "Yu Gothic", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       background: #f5f5f5;
       color: #222;
     }
@@ -29,7 +22,6 @@ I  <title>出退勤管理</title>
     h1 {
       text-align: center;
       margin: 15px 0 30px;
-      font-size: 30px;
     }
 
     .subtitle {
@@ -44,90 +36,86 @@ I  <title>出退勤管理</title>
       gap: 14px;
     }
 
+    button {
+      border: 0;
+      border-radius: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
     .employee {
       background: white;
-      border: none;
-      border-radius: 16px;
-      padding: 25px 10px;
+      padding: 28px 10px;
       font-size: 21px;
-      font-weight: bold;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      box-shadow: 0 2px 8px #ddd;
     }
 
-    .employee:active {
-      transform: scale(.97);
-    }
-
-    .selected-name {
-      text-align: center;
-      font-size: 25px;
-      font-weight: bold;
-      margin: 20px 0 25px;
-    }
-
-    .button {
+    .action {
       width: 100%;
-      border: none;
-      border-radius: 16px;
       padding: 22px;
-      margin-bottom: 15px;
-      font-size: 24px;
-      font-weight: bold;
+      margin: 10px 0;
       color: white;
+      font-size: 23px;
     }
 
-    .clock-in {
+    .in {
       background: #28a745;
     }
 
-    .clock-out {
+    .out {
       background: #dc3545;
     }
 
     .back {
       background: #777;
+      color: white;
+      width: 100%;
+      padding: 16px;
+      margin-top: 10px;
       font-size: 18px;
-      padding: 15px;
     }
 
-    .card {
+    .name {
+      text-align: center;
+      font-size: 25px;
+      font-weight: bold;
+      margin: 25px 0;
+    }
+
+    .box {
       background: white;
-      border-radius: 18px;
       padding: 25px;
-      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+      border-radius: 18px;
+      box-shadow: 0 2px 8px #ddd;
+    }
+
+    input {
+      width: 100%;
+      padding: 16px;
+      font-size: 20px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin: 10px 0 20px;
+      text-align: center;
     }
 
     .message {
       text-align: center;
       padding: 15px;
-      margin-top: 15px;
+      margin-top: 20px;
       border-radius: 10px;
-      background: #eee;
+      background: #e8f5e9;
+    }
+
+    .error {
+      color: #c00;
+      text-align: center;
+      padding: 20px;
     }
 
     .hidden {
       display: none;
-    }
-
-    input {
-      width: 100%;
-      padding: 18px;
-      font-size: 22px;
-      border: 1px solid #ccc;
-      border-radius: 12px;
-      margin: 10px 0 20px;
-      text-align: center;
-    }
-
-    .confirm {
-      background: #333;
-      color: white;
-      border: none;
-      width: 100%;
-      padding: 18px;
-      border-radius: 12px;
-      font-size: 20px;
-      font-weight: bold;
     }
   </style>
 </head>
@@ -136,65 +124,41 @@ I  <title>出退勤管理</title>
 
 <div class="container">
 
-  <!-- NAME SCREEN -->
   <div id="nameScreen">
-
     <h1>出退勤管理</h1>
-
-    <div class="subtitle">
-      名前を選択してください
-    </div>
-
+    <div class="subtitle">名前を選択してください</div>
     <div id="employees" class="employees">
       読み込み中...
     </div>
-
   </div>
 
-
-  <!-- CLOCK SCREEN -->
   <div id="clockScreen" class="hidden">
-
     <h1>出退勤</h1>
 
-    <div id="selectedName" class="selected-name"></div>
+    <div id="selectedName" class="name"></div>
 
-    <div class="card">
-
-      <button
-        class="button clock-in"
-        onclick="clockIn()">
+    <div class="box">
+      <button class="action in" onclick="clockIn()">
         🟢 出勤
       </button>
 
-      <button
-        class="button clock-out"
-        onclick="showBreakForm()">
+      <button class="action out" onclick="showBreak()">
         🔴 退勤
       </button>
 
-      <button
-        class="button back"
-        onclick="goBack()">
+      <button class="back" onclick="goBack()">
         ← 名前を変更
       </button>
-
     </div>
 
-    <div id="statusMessage" class="message hidden"></div>
-
+    <div id="message" class="message hidden"></div>
   </div>
 
-
-  <!-- BREAK SCREEN -->
-
   <div id="breakScreen" class="hidden">
-
     <h1>退勤</h1>
 
-    <div class="card">
-
-      <div class="selected-name" id="breakEmployeeName"></div>
+    <div class="box">
+      <div id="breakName" class="name"></div>
 
       <p style="text-align:center;">
         今日の休憩時間を入力してください
@@ -206,84 +170,63 @@ I  <title>出退勤管理</title>
         min="0"
         placeholder="例：60">
 
-      <p style="text-align:center;">
-        分
-      </p>
+      <p style="text-align:center;">分</p>
 
-      <button
-        class="confirm"
-        onclick="clockOut()">
+      <button class="action out" onclick="clockOut()">
         退勤する
       </button>
 
-      <button
-        class="button back"
-        style="margin-top:15px;"
-        onclick="cancelBreak()">
+      <button class="back" onclick="cancelBreak()">
         戻る
       </button>
-
     </div>
-
   </div>
 
 </div>
 
-
 <script>
 
-  // =========================
-  // SUPABASE
-  // =========================
+const SUPABASE_URL =
+  "https://yxlcnyxuziukptvtmgub.supabase.co";
 
-  const SUPABASE_URL =
-    "https://yxlcnyxuziukptvtmgub.supabase.co";
+const SUPABASE_KEY =
+  "sb_publishable_4p3StZjP4BQA_NE7b9oMDQ_N2DeHvn5";
 
-  const SUPABASE_KEY =
-    "sb_publishable_4p3StZjP4BQA_NE7b9oMDQ_N2DeHvn5;
+let selectedEmployee = null;
+let todayRecord = null;
 
-  const supabaseClient =
-    supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
+
+/* Load employees */
+
+async function loadEmployees() {
+
+  try {
+
+    const response = await fetch(
+      SUPABASE_URL +
+      "/rest/v1/employees?select=*&active=eq.true&order=id",
+      {
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": "Bearer " + SUPABASE_KEY
+        }
+      }
     );
 
+    if (!response.ok) {
+      throw new Error(
+        "Supabase error: " + response.status
+      );
+    }
 
-  let selectedEmployee = null;
-  let todayAttendance = null;
-
-
-  // =========================
-  // LOAD EMPLOYEES
-  // =========================
-
-  async function loadEmployees() {
-
-    const { data, error } =
-      await supabaseClient
-        .from("employees")
-        .select("*")
-        .eq("active", true)
-        .order("id");
-
-    if (error) {
-  console.error(error);
-
-  document.getElementById("employees").innerHTML =
-    "<p style='color:red;'>読み込みエラー：</p>" +
-    "<p style='font-size:14px;'>" +
-    error.message +
-    "</p>";
-
-  return;
-}
+    const employees = await response.json();
 
     const container =
       document.getElementById("employees");
 
     container.innerHTML = "";
 
-    data.forEach(employee => {
+    employees.forEach(employee => {
 
       const button =
         document.createElement("button");
@@ -292,279 +235,297 @@ I  <title>出退勤管理</title>
 
       button.textContent = employee.name;
 
-      button.onclick =
-        () => selectEmployee(employee);
+      button.onclick = function() {
+        selectEmployee(employee);
+      };
 
       container.appendChild(button);
 
     });
 
-  }
+  } catch (error) {
 
+    console.error(error);
 
-  // =========================
-  // SELECT EMPLOYEE
-  // =========================
-
-  async function selectEmployee(employee) {
-
-    selectedEmployee = employee;
-
-    document.getElementById("nameScreen")
-      .classList.add("hidden");
-
-    document.getElementById("clockScreen")
-      .classList.remove("hidden");
-
-    document.getElementById("selectedName")
-      .textContent =
-        employee.name + "さん";
-
-    await checkTodayAttendance();
+    document.getElementById("employees").innerHTML =
+      '<div class="error">' +
+      '読み込みエラー<br><br>' +
+      error.message +
+      '</div>';
 
   }
 
+}
 
-  // =========================
-  // CHECK TODAY
-  // =========================
 
-  async function checkTodayAttendance() {
+/* Select employee */
 
-    const today =
-      new Date().toISOString().split("T")[0];
+async function selectEmployee(employee) {
 
-    const { data, error } =
-      await supabaseClient
-        .from("attendance")
-        .select("*")
-        .eq("employee_id", selectedEmployee.id)
-        .eq("work_date", today)
-        .order("id", { ascending: false })
-        .limit(1);
+  selectedEmployee = employee;
 
-    if (error) {
-      console.error(error);
-      return;
+  document.getElementById("nameScreen")
+    .classList.add("hidden");
+
+  document.getElementById("clockScreen")
+    .classList.remove("hidden");
+
+  document.getElementById("selectedName")
+    .textContent = employee.name + "さん";
+
+  await checkToday();
+
+}
+
+
+/* Check today's attendance */
+
+async function checkToday() {
+
+  const today =
+    new Date().toLocaleDateString("en-CA", {
+      timeZone: "Asia/Tokyo"
+    });
+
+  const response = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/attendance?employee_id=eq." +
+    selectedEmployee.id +
+    "&work_date=eq." +
+    today +
+    "&select=*&order=id.desc&limit=1",
+    {
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY
+      }
     }
+  );
 
-    todayAttendance =
-      data && data.length > 0
-        ? data[0]
-        : null;
+  if (response.ok) {
+
+    const data = await response.json();
+
+    todayRecord =
+      data.length ? data[0] : null;
 
   }
 
+}
 
-  // =========================
-  // CLOCK IN
-  // =========================
 
-  async function clockIn() {
+/* Clock in */
 
-    if (todayAttendance &&
-        todayAttendance.clock_in &&
-        !todayAttendance.clock_out) {
+async function clockIn() {
 
-      showMessage("すでに出勤しています。");
+  if (todayRecord &&
+      todayRecord.clock_in &&
+      !todayRecord.clock_out) {
 
-      return;
+    showMessage("すでに出勤しています。");
+
+    return;
+  }
+
+  const today =
+    new Date().toLocaleDateString("en-CA", {
+      timeZone: "Asia/Tokyo"
+    });
+
+  const now =
+    new Date().toISOString();
+
+  const response = await fetch(
+    SUPABASE_URL + "/rest/v1/attendance",
+    {
+      method: "POST",
+
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY,
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+      },
+
+      body: JSON.stringify({
+        employee_id: selectedEmployee.id,
+        work_date: today,
+        clock_in: now,
+        break_minutes: 0
+      })
     }
+  );
 
-    const now =
-      new Date().toISOString();
-
-    const today =
-      new Date().toISOString().split("T")[0];
-
-    const { data, error } =
-      await supabaseClient
-        .from("attendance")
-        .insert({
-          employee_id: selectedEmployee.id,
-          work_date: today,
-          clock_in: now,
-          break_minutes: 0
-        })
-        .select()
-        .single();
-
-    if (error) {
-
-      console.error(error);
-
-      showMessage(
-        "出勤登録に失敗しました。"
-      );
-
-      return;
-    }
-
-    todayAttendance = data;
+  if (!response.ok) {
 
     showMessage(
-      "🟢 " +
-      selectedEmployee.name +
-      "さんの出勤を登録しました！"
+      "出勤登録に失敗しました。"
     );
 
+    return;
   }
 
+  const data = await response.json();
 
-  // =========================
-  // SHOW BREAK FORM
-  // =========================
+  todayRecord = data[0];
 
-  function showBreakForm() {
+  showMessage(
+    "🟢 " +
+    selectedEmployee.name +
+    "さんの出勤を登録しました！"
+  );
 
-    if (!todayAttendance ||
-        !todayAttendance.clock_in) {
-
-      showMessage(
-        "先に「出勤」を登録してください。"
-      );
-
-      return;
-    }
-
-    if (todayAttendance.clock_out) {
-
-      showMessage(
-        "今日はすでに退勤しています。"
-      );
-
-      return;
-    }
-
-    document.getElementById("clockScreen")
-      .classList.add("hidden");
-
-    document.getElementById("breakScreen")
-      .classList.remove("hidden");
-
-    document.getElementById("breakEmployeeName")
-      .textContent =
-        selectedEmployee.name + "さん";
-
-    document.getElementById("breakMinutes")
-      .value = "";
-
-  }
+}
 
 
-  // =========================
-  // CLOCK OUT
-  // =========================
+/* Show break screen */
 
-  async function clockOut() {
+function showBreak() {
 
-    const breakMinutes =
-      parseInt(
-        document.getElementById("breakMinutes").value
-      );
-
-    if (isNaN(breakMinutes) ||
-        breakMinutes < 0) {
-
-      alert("休憩時間を入力してください。");
-
-      return;
-    }
-
-    const now =
-      new Date().toISOString();
-
-    const { data, error } =
-      await supabaseClient
-        .from("attendance")
-        .update({
-          clock_out: now,
-          break_minutes: breakMinutes
-        })
-        .eq("id", todayAttendance.id)
-        .select()
-        .single();
-
-    if (error) {
-
-      console.error(error);
-
-      alert(
-        "退勤登録に失敗しました。"
-      );
-
-      return;
-    }
-
-    todayAttendance = data;
-
-    document.getElementById("breakScreen")
-      .classList.add("hidden");
-
-    document.getElementById("clockScreen")
-      .classList.remove("hidden");
+  if (!todayRecord ||
+      !todayRecord.clock_in) {
 
     showMessage(
-      "🔴 " +
-      selectedEmployee.name +
-      "さんの退勤を登録しました！"
+      "先に「出勤」を登録してください。"
     );
 
+    return;
   }
 
+  if (todayRecord.clock_out) {
 
-  // =========================
-  // BACK
-  // =========================
+    showMessage(
+      "今日はすでに退勤しています。"
+    );
 
-  function goBack() {
-
-    selectedEmployee = null;
-    todayAttendance = null;
-
-    document.getElementById("clockScreen")
-      .classList.add("hidden");
-
-    document.getElementById("nameScreen")
-      .classList.remove("hidden");
-
-    document.getElementById("statusMessage")
-      .classList.add("hidden");
-
+    return;
   }
 
+  document.getElementById("clockScreen")
+    .classList.add("hidden");
 
-  function cancelBreak() {
+  document.getElementById("breakScreen")
+    .classList.remove("hidden");
 
-    document.getElementById("breakScreen")
-      .classList.add("hidden");
+  document.getElementById("breakName")
+    .textContent =
+    selectedEmployee.name + "さん";
 
-    document.getElementById("clockScreen")
-      .classList.remove("hidden");
+}
 
+
+/* Clock out */
+
+async function clockOut() {
+
+  const minutes =
+    parseInt(
+      document.getElementById("breakMinutes").value
+    );
+
+  if (isNaN(minutes) || minutes < 0) {
+
+    alert("休憩時間を入力してください。");
+
+    return;
   }
 
+  const now =
+    new Date().toISOString();
 
-  function showMessage(message) {
+  const response = await fetch(
+    SUPABASE_URL +
+    "/rest/v1/attendance?id=eq." +
+    todayRecord.id,
+    {
+      method: "PATCH",
 
-    const element =
-      document.getElementById("statusMessage");
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY,
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+      },
 
-    element.textContent = message;
+      body: JSON.stringify({
+        clock_out: now,
+        break_minutes: minutes
+      })
+    }
+  );
 
-    element.classList.remove("hidden");
+  if (!response.ok) {
 
-    setTimeout(() => {
+    alert("退勤登録に失敗しました。");
 
-      element.classList.add("hidden");
-
-    }, 4000);
-
+    return;
   }
 
+  document.getElementById("breakScreen")
+    .classList.add("hidden");
 
-  // Start app
-  loadEmployees();
+  document.getElementById("clockScreen")
+    .classList.remove("hidden");
+
+  showMessage(
+    "🔴 " +
+    selectedEmployee.name +
+    "さんの退勤を登録しました！"
+  );
+
+}
+
+
+/* Back */
+
+function goBack() {
+
+  selectedEmployee = null;
+  todayRecord = null;
+
+  document.getElementById("clockScreen")
+    .classList.add("hidden");
+
+  document.getElementById("nameScreen")
+    .classList.remove("hidden");
+
+}
+
+
+/* Cancel break */
+
+function cancelBreak() {
+
+  document.getElementById("breakScreen")
+    .classList.add("hidden");
+
+  document.getElementById("clockScreen")
+    .classList.remove("hidden");
+
+}
+
+
+/* Message */
+
+function showMessage(text) {
+
+  const message =
+    document.getElementById("message");
+
+  message.textContent = text;
+
+  message.classList.remove("hidden");
+
+  setTimeout(function() {
+    message.classList.add("hidden");
+  }, 4000);
+
+}
+
+
+/* Start */
+
+loadEmployees();
 
 </script>
 
