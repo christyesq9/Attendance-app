@@ -44,6 +44,11 @@ button {
   margin: 5px;
 }
 
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 button:active {
   transform: scale(0.98);
 }
@@ -112,10 +117,8 @@ button:active {
   font-size: 18px;
 }
 
-.staff-button.selected {
-  background: #222;
-  color: white;
-  border-color: #222;
+.staff-button:hover {
+  background: #f8f9fa;
 }
 
 .attendance-buttons {
@@ -143,7 +146,8 @@ button:active {
   margin: 10px 0;
 }
 
-input, select {
+input,
+select {
   width: 100%;
   padding: 12px;
   border: 1px solid #ccc;
@@ -209,6 +213,7 @@ label {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .employee-name {
@@ -223,7 +228,7 @@ label {
 
 .pay {
   font-weight: bold;
-  margin-top: 5px;
+  margin-top: 8px;
 }
 
 .warning-text {
@@ -354,6 +359,7 @@ label {
 }
 
 @media (max-width: 500px) {
+
   .container {
     padding: 12px;
   }
@@ -373,6 +379,11 @@ label {
   .payroll-grid {
     grid-template-columns: 1fr;
   }
+
+  .tabs button {
+    font-size: 13px;
+    padding: 12px 5px;
+  }
 }
 </style>
 </head>
@@ -381,326 +392,133 @@ label {
 
 <div class="container">
 
-  <!-- ========================= -->
-  <!-- STAFF NAME SCREEN -->
-  <!-- ========================= -->
+<!-- =====================================================
+     STAFF HOME
+===================================================== -->
 
-  <div id="nameScreen">
+<div id="nameScreen">
 
-    <div class="card center">
+  <div class="card center">
 
-      <h1>出退勤管理</h1>
+    <h1>出退勤管理</h1>
 
-      <div id="currentTime" class="big-time">
-        --:--:--
-      </div>
-
-      <div id="currentDate" class="date-text">
-        ----年--月--日
-      </div>
-
+    <div id="currentTime" class="big-time">
+      --:--:--
     </div>
 
-    <div class="card">
-
-      <h2>スタッフを選択</h2>
-
-      <div id="staffList" class="staff-grid">
-        読み込み中...
-      </div>
-
-    </div>
-
-    <div class="card center">
-
-      <button class="secondary" onclick="openManagerLogin()">
-        管理者画面
-      </button>
-
+    <div id="currentDate" class="date-text">
+      ----年--月--日
     </div>
 
   </div>
 
+  <div class="card">
 
-  <!-- ========================= -->
-  <!-- STAFF ATTENDANCE SCREEN -->
-  <!-- ========================= -->
+    <h2>スタッフを選択</h2>
 
-  <div id="attendanceScreen" class="hidden">
+    <div id="staffList" class="staff-grid">
+      読み込み中...
+    </div>
 
-    <div class="card center">
+  </div>
 
-      <h2 id="selectedStaffName">
-        スタッフ
-      </h2>
+  <div class="card center">
 
-      <div id="attendanceTime" class="big-time">
-        --:--:--
-      </div>
+    <button
+      class="secondary"
+      onclick="openManagerLogin()">
+      管理者画面
+    </button>
 
-      <div id="attendanceDate" class="date-text">
-        ----年--月--日
-      </div>
+  </div>
 
-      <div id="attendanceStatus" class="status-box">
-        状態を確認中...
-      </div>
+</div>
 
-      <div class="attendance-buttons">
 
-        <button
-          id="clockInButton"
-          class="success"
-          onclick="clockIn()">
-          出勤
-        </button>
+<!-- =====================================================
+     STAFF ATTENDANCE
+===================================================== -->
 
-        <button
-          id="clockOutButton"
-          class="danger"
-          onclick="clockOut()">
-          退勤
-        </button>
+<div id="attendanceScreen" class="hidden">
 
-      </div>
+  <div class="card center">
+
+    <h2 id="selectedStaffName">
+      スタッフ
+    </h2>
+
+    <div id="attendanceTime" class="big-time">
+      --:--:--
+    </div>
+
+    <div id="attendanceDate" class="date-text">
+      ----年--月--日
+    </div>
+
+    <div id="attendanceStatus" class="status-box">
+      読み込み中...
+    </div>
+
+    <div class="attendance-buttons">
+
+      <button
+        id="clockInButton"
+        class="success"
+        onclick="clockIn()">
+        出勤
+      </button>
+
+      <button
+        id="clockOutButton"
+        class="danger"
+        onclick="clockOut()">
+        退勤
+      </button>
+
+    </div>
+
+    <button
+      class="secondary"
+      onclick="backToStaffSelection()">
+      スタッフ選択に戻る
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     MANAGER LOGIN
+===================================================== -->
+
+<div id="managerLoginScreen" class="hidden">
+
+  <div class="card">
+
+    <h2>管理者ログイン</h2>
+
+    <label>PIN</label>
+
+    <input
+      type="password"
+      id="managerPinInput"
+      inputmode="numeric"
+      placeholder="PINを入力">
+
+    <div class="center">
+
+      <button
+        class="primary"
+        onclick="managerLogin()">
+        ログイン
+      </button>
 
       <button
         class="secondary"
         onclick="backToStaffSelection()">
-        スタッフ選択に戻る
+        戻る
       </button>
-
-    </div>
-
-  </div>
-
-
-  <!-- ========================= -->
-  <!-- MANAGER LOGIN -->
-  <!-- ========================= -->
-
-  <div id="managerLoginScreen" class="hidden">
-
-    <div class="card">
-
-      <h2>管理者ログイン</h2>
-
-      <label>PIN</label>
-
-      <input
-        type="password"
-        id="managerPinInput"
-        inputmode="numeric"
-        placeholder="PINを入力">
-
-      <div class="center">
-
-        <button
-          class="primary"
-          onclick="managerLogin()">
-          ログイン
-        </button>
-
-        <button
-          class="secondary"
-          onclick="backToStaffSelection()">
-          戻る
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- ========================= -->
-  <!-- MANAGER DASHBOARD -->
-  <!-- ========================= -->
-
-  <div id="managerScreen" class="hidden">
-
-    <div class="card">
-
-      <div class="manager-header">
-
-        <div>
-          <h2>管理者画面</h2>
-        </div>
-
-        <button
-          class="secondary small-btn"
-          onclick="managerLogout()">
-          ログアウト
-        </button>
-
-      </div>
-
-      <div class="tabs">
-
-        <button
-          id="dailyTabButton"
-          class="active"
-          onclick="showManagerTab('daily')">
-          日別勤務管理
-        </button>
-
-        <button
-          id="payrollTabButton"
-          onclick="showManagerTab('payroll')">
-          給与計算
-        </button>
-
-        <button
-          id="employeeTabButton"
-          onclick="showManagerTab('employees')">
-          スタッフ管理
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- ========================= -->
-    <!-- DAILY MANAGEMENT -->
-    <!-- ========================= -->
-
-    <div id="dailyTab">
-
-      <div class="card">
-
-        <h3>勤務日</h3>
-
-        <div class="date-controls">
-
-          <button
-            class="secondary"
-            onclick="changeManagerDate(-1)">
-            ←
-          </button>
-
-          <input
-            type="date"
-            id="managerDatePicker"
-            onchange="loadManagerData()">
-
-          <button
-            class="secondary"
-            onclick="changeManagerDate(1)">
-            →
-          </button>
-
-        </div>
-
-        <button
-          class="primary"
-          onclick="loadManagerData()">
-          更新
-        </button>
-
-        <button
-          class="secondary"
-          onclick="exportDailyCSV()">
-          CSV出力
-        </button>
-
-      </div>
-
-
-      <div class="card">
-
-        <h3>勤務状況</h3>
-
-        <div id="dailyAttendanceList">
-          読み込み中...
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- ========================= -->
-    <!-- PAYROLL -->
-    <!-- ========================= -->
-
-    <div id="payrollTab" class="hidden">
-
-      <div class="card">
-
-        <h3>給与計算</h3>
-
-        <label>対象月</label>
-
-        <input
-          type="month"
-          id="payrollMonth"
-          onchange="loadPayroll()">
-
-        <button
-          class="primary"
-          onclick="loadPayroll()">
-          計算
-        </button>
-
-        <button
-          class="secondary"
-          onclick="exportPayrollCSV()">
-          CSV出力
-        </button>
-
-      </div>
-
-
-      <div id="payrollResult"></div>
-
-    </div>
-
-
-    <!-- ========================= -->
-    <!-- EMPLOYEE MANAGEMENT -->
-    <!-- ========================= -->
-
-    <div id="employeesTab" class="hidden">
-
-      <div class="card">
-
-        <h3>スタッフ追加</h3>
-
-        <label>スタッフ名</label>
-
-        <input
-          type="text"
-          id="newEmployeeName"
-          placeholder="例：山田太郎">
-
-        <label>時給</label>
-
-        <input
-          type="number"
-          id="newEmployeeHourlyRate"
-          placeholder="例：1200"
-          min="0">
-
-        <button
-          class="success"
-          onclick="addEmployee()">
-          スタッフ追加
-        </button>
-
-      </div>
-
-
-      <div class="card">
-
-        <h3>スタッフ一覧</h3>
-
-        <div id="employeeAdminList">
-          読み込み中...
-        </div>
-
-      </div>
 
     </div>
 
@@ -709,9 +527,201 @@ label {
 </div>
 
 
-<!-- ========================= -->
-<!-- EDIT ATTENDANCE MODAL -->
-<!-- ========================= -->
+<!-- =====================================================
+     MANAGER SCREEN
+===================================================== -->
+
+<div id="managerScreen" class="hidden">
+
+  <div class="card">
+
+    <div class="manager-header">
+
+      <h2>管理者画面</h2>
+
+      <button
+        class="secondary small-btn"
+        onclick="managerLogout()">
+        ログアウト
+      </button>
+
+    </div>
+
+    <div class="tabs">
+
+      <button
+        id="dailyTabButton"
+        class="active"
+        onclick="showManagerTab('daily')">
+        日別勤務管理
+      </button>
+
+      <button
+        id="payrollTabButton"
+        onclick="showManagerTab('payroll')">
+        給与計算
+      </button>
+
+      <button
+        id="employeeTabButton"
+        onclick="showManagerTab('employees')">
+        スタッフ管理
+      </button>
+
+    </div>
+
+  </div>
+
+
+<!-- =====================================================
+     DAILY
+===================================================== -->
+
+<div id="dailyTab">
+
+  <div class="card">
+
+    <h3>勤務日</h3>
+
+    <div class="date-controls">
+
+      <button
+        class="secondary"
+        onclick="changeManagerDate(-1)">
+        ←
+      </button>
+
+      <input
+        type="date"
+        id="managerDatePicker"
+        onchange="loadManagerData()">
+
+      <button
+        class="secondary"
+        onclick="changeManagerDate(1)">
+        →
+      </button>
+
+    </div>
+
+    <button
+      class="primary"
+      onclick="loadManagerData()">
+      更新
+    </button>
+
+    <button
+      class="secondary"
+      onclick="exportDailyCSV()">
+      CSV出力
+    </button>
+
+  </div>
+
+
+  <div class="card">
+
+    <h3>勤務状況</h3>
+
+    <div id="dailyAttendanceList">
+      読み込み中...
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     PAYROLL
+===================================================== -->
+
+<div id="payrollTab" class="hidden">
+
+  <div class="card">
+
+    <h3>給与計算</h3>
+
+    <label>対象月</label>
+
+    <input
+      type="month"
+      id="payrollMonth"
+      onchange="loadPayroll()">
+
+    <button
+      class="primary"
+      onclick="loadPayroll()">
+      計算
+    </button>
+
+    <button
+      class="secondary"
+      onclick="exportPayrollCSV()">
+      CSV出力
+    </button>
+
+  </div>
+
+  <div id="payrollResult"></div>
+
+</div>
+
+
+<!-- =====================================================
+     EMPLOYEE MANAGEMENT
+===================================================== -->
+
+<div id="employeesTab" class="hidden">
+
+  <div class="card">
+
+    <h3>スタッフ追加</h3>
+
+    <label>スタッフ名</label>
+
+    <input
+      type="text"
+      id="newEmployeeName"
+      placeholder="例：山田太郎">
+
+    <label>時給</label>
+
+    <input
+      type="number"
+      id="newEmployeeHourlyRate"
+      placeholder="例：1200"
+      min="0">
+
+    <button
+      class="success"
+      onclick="addEmployee()">
+      スタッフ追加
+    </button>
+
+  </div>
+
+
+  <div class="card">
+
+    <h3>スタッフ一覧</h3>
+
+    <div id="employeeAdminList">
+      読み込み中...
+    </div>
+
+  </div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     EDIT ATTENDANCE MODAL
+===================================================== -->
 
 <div
   id="editModal"
@@ -772,9 +782,9 @@ label {
 </div>
 
 
-<!-- ========================= -->
-<!-- EDIT EMPLOYEE MODAL -->
-<!-- ========================= -->
+<!-- =====================================================
+     EDIT EMPLOYEE MODAL
+===================================================== -->
 
 <div
   id="employeeModal"
@@ -825,7 +835,7 @@ label {
 <script>
 
 /* =====================================================
-   SUPABASE SETTINGS
+   SUPABASE
 ===================================================== */
 
 const SUPABASE_URL =
@@ -838,10 +848,11 @@ const MANAGER_PIN = "1234";
 
 
 /* =====================================================
-   APP STATE
+   GLOBAL VARIABLES
 ===================================================== */
 
 let employees = [];
+
 let attendanceRecords = [];
 
 let selectedEmployee = null;
@@ -867,40 +878,71 @@ async function supabaseRequest(
 
   const options = {
 
-    method,
+    method: method,
 
     headers: {
+
       "apikey": SUPABASE_KEY,
-      "Authorization": "Bearer " + SUPABASE_KEY,
-      "Content-Type": "application/json",
-      "Prefer": "return=representation"
+
+      "Authorization":
+        "Bearer " + SUPABASE_KEY,
+
+      "Content-Type":
+        "application/json",
+
+      "Prefer":
+        "return=representation"
+
     }
 
   };
 
+
   if (body !== null) {
-    options.body = JSON.stringify(body);
+
+    options.body =
+      JSON.stringify(body);
+
   }
 
-  const response = await fetch(url, options);
+
+  const response =
+    await fetch(
+      url,
+      options
+    );
+
 
   if (!response.ok) {
 
-    const errorText = await response.text();
+    const errorText =
+      await response.text();
 
-    console.error(errorText);
+    console.error(
+      "Supabase error:",
+      errorText
+    );
 
-    throw new Error(errorText);
+    throw new Error(
+      errorText
+    );
+
   }
 
-  const text = await response.text();
 
-  return text ? JSON.parse(text) : [];
+  const text =
+    await response.text();
+
+
+  return text
+    ? JSON.parse(text)
+    : [];
+
 }
 
 
 /* =====================================================
-   JAPAN DATE / TIME
+   JAPAN DATE
 ===================================================== */
 
 function getJapanDate() {
@@ -918,6 +960,10 @@ function getJapanDate() {
 }
 
 
+/* =====================================================
+   JAPAN TIME
+===================================================== */
+
 function getJapanDateTimeParts() {
 
   const parts =
@@ -933,17 +979,27 @@ function getJapanDateTimeParts() {
         second: "2-digit",
         hour12: false
       }
-    ).formatToParts(new Date());
+    ).formatToParts(
+      new Date()
+    );
+
 
   const result = {};
 
-  parts.forEach(part => {
+  parts.forEach(
+    part => {
 
-    if (part.type !== "literal") {
-      result[part.type] = part.value;
+      if (
+        part.type !== "literal"
+      ) {
+
+        result[part.type] =
+          part.value;
+
+      }
+
     }
-
-  });
+  );
 
   return result;
 
@@ -952,7 +1008,8 @@ function getJapanDateTimeParts() {
 
 function getJapanTimeString() {
 
-  const p = getJapanDateTimeParts();
+  const p =
+    getJapanDateTimeParts();
 
   return `${p.hour}:${p.minute}:${p.second}`;
 
@@ -961,7 +1018,8 @@ function getJapanTimeString() {
 
 function getJapanDateString() {
 
-  const p = getJapanDateTimeParts();
+  const p =
+    getJapanDateTimeParts();
 
   return `${p.year}年${p.month}月${p.day}日`;
 
@@ -969,16 +1027,15 @@ function getJapanDateString() {
 
 
 /* =====================================================
-   UTC / JAPAN DATETIME
+   DATETIME CONVERSION
 ===================================================== */
 
 function japanDateTimeToISO(value) {
 
   if (!value) return null;
 
-  const date = new Date(value);
-
-  return date.toISOString();
+  return new Date(value)
+    .toISOString();
 
 }
 
@@ -987,7 +1044,9 @@ function isoToJapanInput(iso) {
 
   if (!iso) return "";
 
-  const date = new Date(iso);
+  const date =
+    new Date(iso);
+
 
   const parts =
     new Intl.DateTimeFormat(
@@ -1003,15 +1062,24 @@ function isoToJapanInput(iso) {
       }
     ).formatToParts(date);
 
+
   const p = {};
 
-  parts.forEach(x => {
+  parts.forEach(
+    x => {
 
-    if (x.type !== "literal") {
-      p[x.type] = x.value;
+      if (
+        x.type !== "literal"
+      ) {
+
+        p[x.type] =
+          x.value;
+
+      }
+
     }
+  );
 
-  });
 
   return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}`;
 
@@ -1030,32 +1098,44 @@ function updateClock() {
   const date =
     getJapanDateString();
 
+
   document.getElementById(
     "currentTime"
-  ).textContent = time;
+  ).textContent =
+    time;
+
 
   document.getElementById(
     "currentDate"
-  ).textContent = date;
+  ).textContent =
+    date;
+
 
   document.getElementById(
     "attendanceTime"
-  ).textContent = time;
+  ).textContent =
+    time;
+
 
   document.getElementById(
     "attendanceDate"
-  ).textContent = date;
+  ).textContent =
+    date;
+
 
   updateWorkingTime();
 
 }
 
 
-setInterval(updateClock, 1000);
+setInterval(
+  updateClock,
+  1000
+);
 
 
 /* =====================================================
-   LOAD ACTIVE EMPLOYEES
+   LOAD EMPLOYEES
 ===================================================== */
 
 async function loadEmployees() {
@@ -1068,6 +1148,7 @@ async function loadEmployees() {
         "GET",
         "?select=*&order=name.asc"
       );
+
 
     renderStaffList();
 
@@ -1088,18 +1169,38 @@ async function loadEmployees() {
 
 
 /* =====================================================
-   STAFF LIST
+   STAFF HOME LIST
+   ONLY ACTIVE STAFF
 ===================================================== */
 
 function renderStaffList() {
 
   const list =
-    document.getElementById("staffList");
+    document.getElementById(
+      "staffList"
+    );
+
+
+  /*
+   IMPORTANT:
+
+   Only active === true
+   will appear on homepage.
+
+   false / null / undefined
+   will NOT appear.
+  */
 
   const activeEmployees =
-    employees.filter(e => e.active !== false);
+    employees.filter(
+      employee =>
+        employee.active === true
+    );
 
-  if (!activeEmployees.length) {
+
+  if (
+    activeEmployees.length === 0
+  ) {
 
     list.innerHTML =
       `<div class="empty">
@@ -1110,25 +1211,40 @@ function renderStaffList() {
 
   }
 
+
   list.innerHTML = "";
 
-  activeEmployees.forEach(employee => {
 
-    const button =
-      document.createElement("button");
+  activeEmployees.forEach(
+    employee => {
 
-    button.className =
-      "staff-button";
+      const button =
+        document.createElement(
+          "button"
+        );
 
-    button.textContent =
-      employee.name;
 
-    button.onclick = () =>
-      selectEmployee(employee);
+      button.className =
+        "staff-button";
 
-    list.appendChild(button);
 
-  });
+      button.textContent =
+        employee.name;
+
+
+      button.onclick =
+        () =>
+          selectEmployee(
+            employee
+          );
+
+
+      list.appendChild(
+        button
+      );
+
+    }
+  );
 
 }
 
@@ -1137,22 +1253,54 @@ function renderStaffList() {
    SELECT STAFF
 ===================================================== */
 
-async function selectEmployee(employee) {
+async function selectEmployee(
+  employee
+) {
 
-  selectedEmployee = employee;
+  /*
+   Safety check:
+   Don't allow inactive staff
+   to enter attendance screen.
+  */
+
+  if (
+    employee.active !== true
+  ) {
+
+    alert(
+      "このスタッフは現在無効です。"
+    );
+
+    await loadEmployees();
+
+    return;
+
+  }
+
+
+  selectedEmployee =
+    employee;
+
 
   document.getElementById(
     "nameScreen"
-  ).classList.add("hidden");
+  ).classList.add(
+    "hidden"
+  );
+
 
   document.getElementById(
     "attendanceScreen"
-  ).classList.remove("hidden");
+  ).classList.remove(
+    "hidden"
+  );
+
 
   document.getElementById(
     "selectedStaffName"
   ).textContent =
     employee.name;
+
 
   await loadTodayAttendance();
 
@@ -1160,14 +1308,19 @@ async function selectEmployee(employee) {
 
 
 /* =====================================================
-   TODAY ATTENDANCE
+   LOAD TODAY
 ===================================================== */
 
 async function loadTodayAttendance() {
 
-  if (!selectedEmployee) return;
+  if (
+    !selectedEmployee
+  ) return;
 
-  const date = getJapanDate();
+
+  const date =
+    getJapanDate();
+
 
   try {
 
@@ -1178,7 +1331,10 @@ async function loadTodayAttendance() {
         `?select=*&employee_id=eq.${selectedEmployee.id}&work_date=eq.${date}&order=clock_in.desc`
       );
 
-    attendanceRecords = records;
+
+    attendanceRecords =
+      records;
+
 
     updateAttendanceStatus();
 
@@ -1199,13 +1355,17 @@ async function loadTodayAttendance() {
 
 
 /* =====================================================
-   CURRENT ATTENDANCE
+   CURRENT RECORD
 ===================================================== */
 
 function getCurrentAttendanceRecord() {
 
-  if (!attendanceRecords.length) {
+  if (
+    !attendanceRecords.length
+  ) {
+
     return null;
+
   }
 
   return attendanceRecords[0];
@@ -1224,37 +1384,51 @@ function updateAttendanceStatus() {
       "attendanceStatus"
     );
 
+
   const clockInButton =
     document.getElementById(
       "clockInButton"
     );
+
 
   const clockOutButton =
     document.getElementById(
       "clockOutButton"
     );
 
+
   const record =
     getCurrentAttendanceRecord();
+
 
   if (!record) {
 
     status.innerHTML =
-      `<div>
+      `
+      <div>
         本日はまだ出勤していません。
-      </div>`;
+      </div>
+      `;
 
-    clockInButton.disabled = false;
-    clockOutButton.disabled = true;
+
+    clockInButton.disabled =
+      false;
+
+    clockOutButton.disabled =
+      true;
 
     return;
 
   }
 
 
-  if (record.clock_in && !record.clock_out) {
+  if (
+    record.clock_in &&
+    !record.clock_out
+  ) {
 
-    status.innerHTML = `
+    status.innerHTML =
+      `
       <div class="success-text">
         出勤中
       </div>
@@ -1265,10 +1439,15 @@ function updateAttendanceStatus() {
           00時間00分
         </span>
       </div>
-    `;
+      `;
 
-    clockInButton.disabled = true;
-    clockOutButton.disabled = false;
+
+    clockInButton.disabled =
+      true;
+
+    clockOutButton.disabled =
+      false;
+
 
     updateWorkingTime();
 
@@ -1277,24 +1456,35 @@ function updateAttendanceStatus() {
   }
 
 
-  if (record.clock_in && record.clock_out) {
+  if (
+    record.clock_in &&
+    record.clock_out
+  ) {
 
     const minutes =
-      calculateWorkMinutes(record);
+      calculateWorkMinutes(
+        record
+      );
 
-    status.innerHTML = `
+
+    status.innerHTML =
+      `
       <div class="success-text">
         本日の勤務は終了しました。
       </div>
 
       <div class="work-summary">
         出勤：
-        ${formatDateTime(record.clock_in)}
+        ${formatDateTime(
+          record.clock_in
+        )}
       </div>
 
       <div class="work-summary">
         退勤：
-        ${formatDateTime(record.clock_out)}
+        ${formatDateTime(
+          record.clock_out
+        )}
       </div>
 
       <div class="work-summary">
@@ -1304,12 +1494,18 @@ function updateAttendanceStatus() {
 
       <div class="working-time">
         実働：
-        ${formatWorkMinutes(minutes)}
+        ${formatWorkMinutes(
+          minutes
+        )}
       </div>
-    `;
+      `;
 
-    clockInButton.disabled = true;
-    clockOutButton.disabled = true;
+
+    clockInButton.disabled =
+      true;
+
+    clockOutButton.disabled =
+      true;
 
   }
 
@@ -1322,24 +1518,46 @@ function updateAttendanceStatus() {
 
 async function clockIn() {
 
-  if (!selectedEmployee) return;
+  if (
+    !selectedEmployee
+  ) return;
 
-  const existing =
-    getCurrentAttendanceRecord();
 
-  if (existing) {
+  /*
+   Extra safety check
+  */
 
-    alert("本日の出勤記録がすでにあります。");
+  if (
+    selectedEmployee.active !== true
+  ) {
+
+    alert(
+      "このスタッフは無効になっています。"
+    );
+
+    backToStaffSelection();
+
+    await loadEmployees();
 
     return;
 
   }
 
-  const now =
-    new Date().toISOString();
 
-  const workDate =
-    getJapanDate();
+  const existing =
+    getCurrentAttendanceRecord();
+
+
+  if (existing) {
+
+    alert(
+      "本日の出勤記録がすでにあります。"
+    );
+
+    return;
+
+  }
+
 
   try {
 
@@ -1348,13 +1566,25 @@ async function clockIn() {
       "POST",
       "",
       {
-        employee_id: selectedEmployee.id,
-        work_date: workDate,
-        clock_in: now,
-        clock_out: null,
-        break_minutes: 0
+
+        employee_id:
+          selectedEmployee.id,
+
+        work_date:
+          getJapanDate(),
+
+        clock_in:
+          new Date().toISOString(),
+
+        clock_out:
+          null,
+
+        break_minutes:
+          0
+
       }
     );
+
 
     await loadTodayAttendance();
 
@@ -1379,15 +1609,22 @@ async function clockOut() {
   const record =
     getCurrentAttendanceRecord();
 
+
   if (!record) return;
 
-  if (record.clock_out) {
 
-    alert("すでに退勤しています。");
+  if (
+    record.clock_out
+  ) {
+
+    alert(
+      "すでに退勤しています。"
+    );
 
     return;
 
   }
+
 
   const breakInput =
     prompt(
@@ -1395,26 +1632,35 @@ async function clockOut() {
       record.break_minutes || "0"
     );
 
-  if (breakInput === null) {
+
+  if (
+    breakInput === null
+  ) {
+
     return;
+
   }
 
+
   const breakMinutes =
-    Number(breakInput);
+    Number(
+      breakInput
+    );
+
 
   if (
     isNaN(breakMinutes) ||
     breakMinutes < 0
   ) {
 
-    alert("休憩時間を正しく入力してください。");
+    alert(
+      "休憩時間を正しく入力してください。"
+    );
 
     return;
 
   }
 
-  const now =
-    new Date().toISOString();
 
   try {
 
@@ -1423,10 +1669,16 @@ async function clockOut() {
       "PATCH",
       `?id=eq.${record.id}`,
       {
-        clock_out: now,
-        break_minutes: breakMinutes
+
+        clock_out:
+          new Date().toISOString(),
+
+        break_minutes:
+          breakMinutes
+
       }
     );
+
 
     await loadTodayAttendance();
 
@@ -1448,31 +1700,44 @@ async function clockOut() {
 
 function updateWorkingTime() {
 
-  if (!selectedEmployee) return;
+  if (
+    !selectedEmployee
+  ) return;
+
 
   const record =
     getCurrentAttendanceRecord();
+
 
   if (
     !record ||
     !record.clock_in ||
     record.clock_out
   ) {
+
     return;
+
   }
 
+
   const minutes =
-    calculateWorkMinutes(record);
+    calculateWorkMinutes(
+      record
+    );
+
 
   const element =
     document.getElementById(
       "liveWorkingTime"
     );
 
+
   if (element) {
 
     element.textContent =
-      formatWorkMinutes(minutes);
+      formatWorkMinutes(
+        minutes
+      );
 
   }
 
@@ -1480,32 +1745,55 @@ function updateWorkingTime() {
 
 
 /* =====================================================
-   CALCULATE WORK MINUTES
+   CALCULATE MINUTES
 ===================================================== */
 
-function calculateWorkMinutes(record) {
+function calculateWorkMinutes(
+  record
+) {
 
-  if (!record || !record.clock_in) {
+  if (
+    !record ||
+    !record.clock_in
+  ) {
+
     return 0;
+
   }
 
+
   const start =
-    new Date(record.clock_in);
+    new Date(
+      record.clock_in
+    );
+
 
   const end =
     record.clock_out
-      ? new Date(record.clock_out)
+      ? new Date(
+          record.clock_out
+        )
       : new Date();
+
 
   let minutes =
     Math.floor(
-      (end - start) / 60000
+      (
+        end - start
+      ) / 60000
     );
 
-  minutes -=
-    Number(record.break_minutes || 0);
 
-  return Math.max(0, minutes);
+  minutes -=
+    Number(
+      record.break_minutes || 0
+    );
+
+
+  return Math.max(
+    0,
+    minutes
+  );
 
 }
 
@@ -1514,39 +1802,70 @@ function calculateWorkMinutes(record) {
    FORMAT WORK TIME
 ===================================================== */
 
-function formatWorkMinutes(minutes) {
+function formatWorkMinutes(
+  minutes
+) {
 
   minutes =
-    Math.max(0, Math.floor(minutes));
+    Math.max(
+      0,
+      Math.floor(minutes)
+    );
+
 
   const hours =
-    Math.floor(minutes / 60);
+    Math.floor(
+      minutes / 60
+    );
+
 
   const mins =
     minutes % 60;
 
-  return `${hours}時間${String(mins).padStart(2, "0")}分`;
+
+  return `${hours}時間${String(
+    mins
+  ).padStart(
+    2,
+    "0"
+  )}分`;
 
 }
 
 
 /* =====================================================
-   FORMAT DATE TIME
+   FORMAT DATETIME
 ===================================================== */
 
-function formatDateTime(iso) {
+function formatDateTime(
+  iso
+) {
 
   if (!iso) return "-";
 
-  return new Date(iso).toLocaleString(
+
+  return new Date(
+    iso
+  ).toLocaleString(
     "ja-JP",
     {
-      timeZone: "Asia/Tokyo",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit"
+      timeZone:
+        "Asia/Tokyo",
+
+      year:
+        "numeric",
+
+      month:
+        "2-digit",
+
+      day:
+        "2-digit",
+
+      hour:
+        "2-digit",
+
+      minute:
+        "2-digit"
     }
   );
 
@@ -1554,28 +1873,44 @@ function formatDateTime(iso) {
 
 
 /* =====================================================
-   BACK TO STAFF
+   BACK HOME
 ===================================================== */
 
 function backToStaffSelection() {
 
-  selectedEmployee = null;
+  selectedEmployee =
+    null;
+
 
   document.getElementById(
     "attendanceScreen"
-  ).classList.add("hidden");
+  ).classList.add(
+    "hidden"
+  );
+
 
   document.getElementById(
     "managerLoginScreen"
-  ).classList.add("hidden");
+  ).classList.add(
+    "hidden"
+  );
+
 
   document.getElementById(
     "managerScreen"
-  ).classList.add("hidden");
+  ).classList.add(
+    "hidden"
+  );
+
 
   document.getElementById(
     "nameScreen"
-  ).classList.remove("hidden");
+  ).classList.remove(
+    "hidden"
+  );
+
+
+  loadEmployees();
 
 }
 
@@ -1588,11 +1923,17 @@ function openManagerLogin() {
 
   document.getElementById(
     "nameScreen"
-  ).classList.add("hidden");
+  ).classList.add(
+    "hidden"
+  );
+
 
   document.getElementById(
     "managerLoginScreen"
-  ).classList.remove("hidden");
+  ).classList.remove(
+    "hidden"
+  );
+
 
   document.getElementById(
     "managerPinInput"
@@ -1608,31 +1949,48 @@ function managerLogin() {
       "managerPinInput"
     ).value;
 
-  if (pin !== MANAGER_PIN) {
 
-    alert("PINが違います。");
+  if (
+    pin !== MANAGER_PIN
+  ) {
+
+    alert(
+      "PINが違います。"
+    );
 
     return;
 
   }
 
+
   document.getElementById(
     "managerLoginScreen"
-  ).classList.add("hidden");
+  ).classList.add(
+    "hidden"
+  );
+
 
   document.getElementById(
     "managerScreen"
-  ).classList.remove("hidden");
+  ).classList.remove(
+    "hidden"
+  );
+
 
   document.getElementById(
     "managerDatePicker"
   ).value =
     managerSelectedDate;
 
+
   document.getElementById(
     "payrollMonth"
   ).value =
-    managerSelectedDate.substring(0, 7);
+    managerSelectedDate.substring(
+      0,
+      7
+    );
+
 
   loadManagerData();
 
@@ -1643,15 +2001,25 @@ function managerLogout() {
 
   document.getElementById(
     "managerScreen"
-  ).classList.add("hidden");
+  ).classList.add(
+    "hidden"
+  );
+
 
   document.getElementById(
     "managerPinInput"
-  ).value = "";
+  ).value =
+    "";
+
 
   document.getElementById(
     "nameScreen"
-  ).classList.remove("hidden");
+  ).classList.remove(
+    "hidden"
+  );
+
+
+  loadEmployees();
 
 }
 
@@ -1660,72 +2028,115 @@ function managerLogout() {
    MANAGER TABS
 ===================================================== */
 
-function showManagerTab(tab) {
+function showManagerTab(
+  tab
+) {
 
   document.getElementById(
     "dailyTab"
-  ).classList.add("hidden");
+  ).classList.add(
+    "hidden"
+  );
+
 
   document.getElementById(
     "payrollTab"
-  ).classList.add("hidden");
+  ).classList.add(
+    "hidden"
+  );
+
 
   document.getElementById(
     "employeesTab"
-  ).classList.add("hidden");
+  ).classList.add(
+    "hidden"
+  );
+
 
   document.getElementById(
     "dailyTabButton"
-  ).classList.remove("active");
+  ).classList.remove(
+    "active"
+  );
+
 
   document.getElementById(
     "payrollTabButton"
-  ).classList.remove("active");
+  ).classList.remove(
+    "active"
+  );
+
 
   document.getElementById(
     "employeeTabButton"
-  ).classList.remove("active");
+  ).classList.remove(
+    "active"
+  );
 
 
-  if (tab === "daily") {
+  if (
+    tab === "daily"
+  ) {
 
     document.getElementById(
       "dailyTab"
-    ).classList.remove("hidden");
+    ).classList.remove(
+      "hidden"
+    );
+
 
     document.getElementById(
       "dailyTabButton"
-    ).classList.add("active");
+    ).classList.add(
+      "active"
+    );
+
 
     loadManagerData();
 
   }
 
 
-  if (tab === "payroll") {
+  if (
+    tab === "payroll"
+  ) {
 
     document.getElementById(
       "payrollTab"
-    ).classList.remove("hidden");
+    ).classList.remove(
+      "hidden"
+    );
+
 
     document.getElementById(
       "payrollTabButton"
-    ).classList.add("active");
+    ).classList.add(
+      "active"
+    );
+
 
     loadPayroll();
 
   }
 
 
-  if (tab === "employees") {
+  if (
+    tab === "employees"
+  ) {
 
     document.getElementById(
       "employeesTab"
-    ).classList.remove("hidden");
+    ).classList.remove(
+      "hidden"
+    );
+
 
     document.getElementById(
       "employeeTabButton"
-    ).classList.add("active");
+    ).classList.add(
+      "active"
+    );
+
 
     loadEmployeeAdmin();
 
@@ -1738,30 +2149,41 @@ function showManagerTab(tab) {
    MANAGER DATE
 ===================================================== */
 
-function changeManagerDate(days) {
+function changeManagerDate(
+  days
+) {
 
   const date =
     new Date(
-      managerSelectedDate + "T00:00:00"
+      managerSelectedDate +
+      "T00:00:00"
     );
+
 
   date.setDate(
     date.getDate() + days
   );
 
+
   managerSelectedDate =
     date.toISOString()
       .split("T")[0];
+
 
   document.getElementById(
     "managerDatePicker"
   ).value =
     managerSelectedDate;
 
+
   loadManagerData();
 
 }
 
+
+/* =====================================================
+   LOAD MANAGER DATA
+===================================================== */
 
 async function loadManagerData() {
 
@@ -1770,6 +2192,7 @@ async function loadManagerData() {
       "managerDatePicker"
     ).value ||
     managerSelectedDate;
+
 
   try {
 
@@ -1780,12 +2203,14 @@ async function loadManagerData() {
         "?select=*&order=name.asc"
       );
 
+
     attendanceRecords =
       await supabaseRequest(
         "attendance",
         "GET",
         `?select=*&work_date=eq.${managerSelectedDate}&order=clock_in.asc`
       );
+
 
     renderDailyAttendance();
 
@@ -1816,7 +2241,10 @@ function renderDailyAttendance() {
       "dailyAttendanceList"
     );
 
-  if (!employees.length) {
+
+  if (
+    !employees.length
+  ) {
 
     container.innerHTML =
       `<div class="empty">
@@ -1827,165 +2255,260 @@ function renderDailyAttendance() {
 
   }
 
-  container.innerHTML = "";
 
-  employees.forEach(employee => {
+  container.innerHTML =
+    "";
 
-    const records =
-      attendanceRecords.filter(
-        r =>
-          String(r.employee_id) ===
-          String(employee.id)
+
+  employees.forEach(
+    employee => {
+
+      const records =
+        attendanceRecords.filter(
+          record =>
+            String(
+              record.employee_id
+            ) ===
+            String(
+              employee.id
+            )
+        );
+
+
+      if (
+        !records.length
+      ) {
+
+        const row =
+          document.createElement(
+            "div"
+          );
+
+
+        row.className =
+          "attendance-row";
+
+
+        row.innerHTML =
+          `
+
+          <div class="attendance-row-header">
+
+            <div>
+
+              <span class="employee-name">
+                ${escapeHtml(
+                  employee.name
+                )}
+              </span>
+
+              ${
+                employee.active === false
+
+                ? `
+                  <span class="badge badge-inactive">
+                    無効
+                  </span>
+                  `
+
+                : `
+                  <span class="badge badge-active">
+                    有効
+                  </span>
+                  `
+              }
+
+            </div>
+
+
+            <button
+              class="secondary small-btn"
+              onclick="openEdit(
+                '${employee.id}',
+                null,
+                '${escapeJs(employee.name)}'
+              )">
+              勤務登録
+            </button>
+
+          </div>
+
+
+          <div class="work-summary">
+            勤務記録なし
+          </div>
+
+          `;
+
+
+        container.appendChild(
+          row
+        );
+
+
+        return;
+
+      }
+
+
+      records.forEach(
+        record => {
+
+          const row =
+            document.createElement(
+              "div"
+            );
+
+
+          row.className =
+            "attendance-row";
+
+
+          const minutes =
+            record.clock_out
+              ? calculateWorkMinutes(
+                  record
+                )
+              : 0;
+
+
+          const hourlyRate =
+            Number(
+              employee.hourly_rate || 0
+            );
+
+
+          const pay =
+            record.clock_out
+              ? Math.round(
+                  minutes /
+                  60 *
+                  hourlyRate
+                )
+              : 0;
+
+
+          row.innerHTML =
+            `
+
+            <div class="attendance-row-header">
+
+              <div>
+
+                <span class="employee-name">
+                  ${escapeHtml(
+                    employee.name
+                  )}
+                </span>
+
+                ${
+                  employee.active === false
+
+                  ? `
+                    <span class="badge badge-inactive">
+                      無効
+                    </span>
+                    `
+
+                  : `
+                    <span class="badge badge-active">
+                      有効
+                    </span>
+                    `
+                }
+
+              </div>
+
+
+              <button
+                class="secondary small-btn"
+                onclick="openEdit(
+                  '${employee.id}',
+                  '${record.id}',
+                  '${escapeJs(employee.name)}'
+                )">
+                編集
+              </button>
+
+            </div>
+
+
+            <div class="work-summary">
+              出勤：
+              ${formatDateTime(
+                record.clock_in
+              )}
+            </div>
+
+
+            <div class="work-summary">
+              退勤：
+              ${
+                record.clock_out
+
+                ? formatDateTime(
+                    record.clock_out
+                  )
+
+                : `
+                  <span class="warning-text">
+                    未退勤
+                  </span>
+                  `
+              }
+            </div>
+
+
+            <div class="work-summary">
+              休憩：
+              ${record.break_minutes || 0}分
+            </div>
+
+
+            <div class="work-summary">
+              実働：
+              ${
+                record.clock_out
+
+                ? formatWorkMinutes(
+                    minutes
+                  )
+
+                : "未計算"
+              }
+            </div>
+
+
+            <div class="pay">
+
+              時給：
+              ¥${hourlyRate.toLocaleString()}
+
+              ${
+                record.clock_out
+
+                ? `
+                  ／ 概算給与：
+                  ¥${pay.toLocaleString()}
+                  `
+
+                : ""
+              }
+
+            </div>
+
+            `;
+
+
+          container.appendChild(
+            row
+          );
+
+        }
       );
 
-    if (!records.length) {
-
-      const row =
-        document.createElement("div");
-
-      row.className =
-        "attendance-row";
-
-      row.innerHTML = `
-        <div class="attendance-row-header">
-          <div>
-            <span class="employee-name">
-              ${escapeHtml(employee.name)}
-            </span>
-
-            ${
-              employee.active === false
-              ? `<span class="badge badge-inactive">
-                  無効
-                </span>`
-              : ""
-            }
-          </div>
-
-          <button
-            class="secondary small-btn"
-            onclick="openEdit('${employee.id}', null, '${escapeJs(employee.name)}')">
-            勤務登録
-          </button>
-        </div>
-
-        <div class="work-summary">
-          勤務記録なし
-        </div>
-      `;
-
-      container.appendChild(row);
-
-      return;
-
     }
-
-
-    records.forEach(record => {
-
-      const row =
-        document.createElement("div");
-
-      row.className =
-        "attendance-row";
-
-      const minutes =
-        record.clock_out
-          ? calculateWorkMinutes(record)
-          : 0;
-
-      const hourlyRate =
-        Number(employee.hourly_rate || 0);
-
-      const pay =
-        record.clock_out
-          ? Math.round(
-              minutes / 60 * hourlyRate
-            )
-          : 0;
-
-
-      row.innerHTML = `
-
-        <div class="attendance-row-header">
-
-          <div>
-            <span class="employee-name">
-              ${escapeHtml(employee.name)}
-            </span>
-
-            ${
-              employee.active === false
-              ? `<span class="badge badge-inactive">
-                  無効
-                </span>`
-              : ""
-            }
-          </div>
-
-          <button
-            class="secondary small-btn"
-            onclick="openEdit('${employee.id}', '${record.id}', '${escapeJs(employee.name)}')">
-            編集
-          </button>
-
-        </div>
-
-
-        <div class="work-summary">
-          出勤：
-          ${formatDateTime(record.clock_in)}
-        </div>
-
-        <div class="work-summary">
-          退勤：
-          ${
-            record.clock_out
-              ? formatDateTime(record.clock_out)
-              : `<span class="warning-text">
-                  未退勤
-                </span>`
-          }
-        </div>
-
-        <div class="work-summary">
-          休憩：
-          ${record.break_minutes || 0}分
-        </div>
-
-        <div class="work-summary">
-
-          実働：
-          ${
-            record.clock_out
-              ? formatWorkMinutes(minutes)
-              : "未計算"
-          }
-
-        </div>
-
-        <div class="pay">
-
-          時給：
-          ¥${hourlyRate.toLocaleString()}
-
-          ${
-            record.clock_out
-              ? `　
-                概算給与：
-                ¥${pay.toLocaleString()}`
-              : ""
-          }
-
-        </div>
-
-      `;
-
-      container.appendChild(row);
-
-    });
-
-  });
+  );
 
 }
 
@@ -2007,45 +2530,67 @@ function openEdit(
         String(recordId)
     );
 
+
   document.getElementById(
     "editEmployeeId"
   ).value =
     employeeId;
+
 
   document.getElementById(
     "editRecordId"
   ).value =
     recordId || "";
 
+
   document.getElementById(
     "editModalTitle"
   ).textContent =
     `${employeeName} 勤務記録`;
 
+
   document.getElementById(
     "editClockIn"
   ).value =
     record
-      ? isoToJapanInput(record.clock_in)
+
+      ? isoToJapanInput(
+          record.clock_in
+        )
+
       : `${managerSelectedDate}T09:00`;
+
 
   document.getElementById(
     "editClockOut"
   ).value =
-    record && record.clock_out
-      ? isoToJapanInput(record.clock_out)
+    record &&
+    record.clock_out
+
+      ? isoToJapanInput(
+          record.clock_out
+        )
+
       : "";
+
 
   document.getElementById(
     "editBreakMinutes"
   ).value =
     record
-      ? record.break_minutes || 0
+
+      ? (
+          record.break_minutes || 0
+        )
+
       : 0;
+
 
   document.getElementById(
     "editModal"
-  ).classList.remove("hidden");
+  ).classList.remove(
+    "hidden"
+  );
 
 }
 
@@ -2054,10 +2599,16 @@ function closeEditModal() {
 
   document.getElementById(
     "editModal"
-  ).classList.add("hidden");
+  ).classList.add(
+    "hidden"
+  );
 
 }
 
+
+/* =====================================================
+   SAVE ATTENDANCE EDIT
+===================================================== */
 
 async function saveEdit() {
 
@@ -2066,20 +2617,24 @@ async function saveEdit() {
       "editEmployeeId"
     ).value;
 
+
   const recordId =
     document.getElementById(
       "editRecordId"
     ).value;
+
 
   const clockIn =
     document.getElementById(
       "editClockIn"
     ).value;
 
+
   const clockOut =
     document.getElementById(
       "editClockOut"
     ).value;
+
 
   const breakMinutes =
     Number(
@@ -2091,7 +2646,9 @@ async function saveEdit() {
 
   if (!clockIn) {
 
-    alert("出勤時間を入力してください。");
+    alert(
+      "出勤時間を入力してください。"
+    );
 
     return;
 
@@ -2106,9 +2663,14 @@ async function saveEdit() {
     const end =
       new Date(clockOut);
 
-    if (end <= start) {
 
-      alert("退勤時間は出勤時間より後にしてください。");
+    if (
+      end <= start
+    ) {
+
+      alert(
+        "退勤時間は出勤時間より後にしてください。"
+      );
 
       return;
 
@@ -2117,18 +2679,39 @@ async function saveEdit() {
   }
 
 
+  if (
+    breakMinutes < 0
+  ) {
+
+    alert(
+      "休憩時間を正しく入力してください。"
+    );
+
+    return;
+
+  }
+
+
   const data = {
 
-    employee_id: employeeId,
+    employee_id:
+      employeeId,
 
-    work_date: managerSelectedDate,
+    work_date:
+      managerSelectedDate,
 
     clock_in:
-      japanDateTimeToISO(clockIn),
+      japanDateTimeToISO(
+        clockIn
+      ),
 
     clock_out:
       clockOut
-        ? japanDateTimeToISO(clockOut)
+
+        ? japanDateTimeToISO(
+            clockOut
+          )
+
         : null,
 
     break_minutes:
@@ -2159,9 +2742,12 @@ async function saveEdit() {
 
     }
 
+
     closeEditModal();
 
+
     await loadManagerData();
+
 
   } catch (error) {
 
@@ -2176,7 +2762,7 @@ async function saveEdit() {
 
 
 /* =====================================================
-   EMPLOYEE ADMIN
+   LOAD EMPLOYEE ADMIN
 ===================================================== */
 
 async function loadEmployeeAdmin() {
@@ -2189,6 +2775,7 @@ async function loadEmployeeAdmin() {
         "GET",
         "?select=*&order=name.asc"
       );
+
 
     renderEmployeeAdminList();
 
@@ -2208,12 +2795,17 @@ async function loadEmployeeAdmin() {
 }
 
 
+/* =====================================================
+   EMPLOYEE ADMIN LIST
+===================================================== */
+
 function renderEmployeeAdminList() {
 
   const container =
     document.getElementById(
       "employeeAdminList"
     );
+
 
   const sorted =
     [...employees].sort(
@@ -2222,12 +2814,22 @@ function renderEmployeeAdminList() {
         if (
           a.active === false &&
           b.active !== false
-        ) return 1;
+        ) {
+
+          return 1;
+
+        }
+
 
         if (
           a.active !== false &&
           b.active === false
-        ) return -1;
+        ) {
+
+          return -1;
+
+        }
+
 
         return a.name.localeCompare(
           b.name,
@@ -2238,7 +2840,9 @@ function renderEmployeeAdminList() {
     );
 
 
-  if (!sorted.length) {
+  if (
+    !sorted.length
+  ) {
 
     container.innerHTML =
       `<div class="empty">
@@ -2250,88 +2854,118 @@ function renderEmployeeAdminList() {
   }
 
 
-  container.innerHTML = "";
+  container.innerHTML =
+    "";
 
 
-  sorted.forEach(employee => {
+  sorted.forEach(
+    employee => {
 
-    const div =
-      document.createElement("div");
+      const div =
+        document.createElement(
+          "div"
+        );
 
-    div.className =
-      "employee-admin" +
-      (
-        employee.active === false
-          ? " inactive"
-          : ""
+
+      div.className =
+        "employee-admin" +
+        (
+          employee.active === false
+            ? " inactive"
+            : ""
+        );
+
+
+      div.innerHTML =
+        `
+
+        <div class="employee-admin-header">
+
+          <div>
+
+            <strong>
+              ${escapeHtml(
+                employee.name
+              )}
+            </strong>
+
+            ${
+              employee.active === false
+
+              ? `
+                <span class="badge badge-inactive">
+                  無効
+                </span>
+                `
+
+              : `
+                <span class="badge badge-active">
+                  有効
+                </span>
+                `
+            }
+
+          </div>
+
+
+          <div>
+
+            <button
+              class="secondary small-btn"
+              onclick="openEmployeeEdit(
+                '${employee.id}'
+              )">
+              編集
+            </button>
+
+
+            ${
+              employee.active === false
+
+              ? `
+                <button
+                  class="success small-btn"
+                  onclick="reactivateEmployee(
+                    '${employee.id}'
+                  )">
+                  再有効化
+                </button>
+                `
+
+              : `
+                <button
+                  class="danger small-btn"
+                  onclick="deactivateEmployee(
+                    '${employee.id}'
+                  )">
+                  無効化
+                </button>
+                `
+            }
+
+          </div>
+
+        </div>
+
+
+        <div class="work-summary">
+
+          時給：
+          ¥${Number(
+            employee.hourly_rate || 0
+          ).toLocaleString()}
+
+        </div>
+
+        `;
+
+
+      container.appendChild(
+        div
       );
 
-
-    div.innerHTML = `
-
-      <div class="employee-admin-header">
-
-        <div>
-
-          <strong>
-            ${escapeHtml(employee.name)}
-          </strong>
-
-          ${
-            employee.active === false
-
-              ? `<span class="badge badge-inactive">
-                  無効
-                </span>`
-
-              : `<span class="badge badge-active">
-                  有効
-                </span>`
-          }
-
-        </div>
-
-        <div>
-
-          <button
-            class="secondary small-btn"
-            onclick="openEmployeeEdit('${employee.id}')">
-            編集
-          </button>
-
-          ${
-            employee.active === false
-
-              ? `<button
-                  class="success small-btn"
-                  onclick="reactivateEmployee('${employee.id}')">
-                  再有効化
-                </button>`
-
-              : `<button
-                  class="danger small-btn"
-                  onclick="deactivateEmployee('${employee.id}')">
-                  無効化
-                </button>`
-          }
-
-        </div>
-
-      </div>
-
-
-      <div class="work-summary">
-
-        時給：
-        ¥${Number(employee.hourly_rate || 0).toLocaleString()}
-
-      </div>
-
-    `;
-
-    container.appendChild(div);
-
-  });
+    }
+  );
 
 }
 
@@ -2347,6 +2981,7 @@ async function addEmployee() {
       "newEmployeeName"
     ).value.trim();
 
+
   const hourlyRate =
     Number(
       document.getElementById(
@@ -2357,16 +2992,22 @@ async function addEmployee() {
 
   if (!name) {
 
-    alert("スタッフ名を入力してください。");
+    alert(
+      "スタッフ名を入力してください。"
+    );
 
     return;
 
   }
 
 
-  if (hourlyRate < 0) {
+  if (
+    hourlyRate < 0
+  ) {
 
-    alert("時給を正しく入力してください。");
+    alert(
+      "時給を正しく入力してください。"
+    );
 
     return;
 
@@ -2380,20 +3021,30 @@ async function addEmployee() {
       "POST",
       "",
       {
-        name: name,
-        active: true,
-        hourly_rate: hourlyRate
+
+        name:
+          name,
+
+        active:
+          true,
+
+        hourly_rate:
+          hourlyRate
+
       }
     );
 
 
     document.getElementById(
       "newEmployeeName"
-    ).value = "";
+    ).value =
+      "";
+
 
     document.getElementById(
       "newEmployeeHourlyRate"
-    ).value = "";
+    ).value =
+      "";
 
 
     await loadEmployeeAdmin();
@@ -2401,7 +3052,9 @@ async function addEmployee() {
     await loadEmployees();
 
 
-    alert("スタッフを追加しました。");
+    alert(
+      "スタッフを追加しました。"
+    );
 
   } catch (error) {
 
@@ -2416,10 +3069,12 @@ async function addEmployee() {
 
 
 /* =====================================================
-   EDIT EMPLOYEE
+   OPEN EMPLOYEE EDIT
 ===================================================== */
 
-function openEmployeeEdit(employeeId) {
+function openEmployeeEdit(
+  employeeId
+) {
 
   const employee =
     employees.find(
@@ -2427,6 +3082,7 @@ function openEmployeeEdit(employeeId) {
         String(e.id) ===
         String(employeeId)
     );
+
 
   if (!employee) return;
 
@@ -2436,10 +3092,12 @@ function openEmployeeEdit(employeeId) {
   ).value =
     employee.id;
 
+
   document.getElementById(
     "editEmployeeName"
   ).value =
     employee.name;
+
 
   document.getElementById(
     "editEmployeeHourlyRate"
@@ -2449,7 +3107,9 @@ function openEmployeeEdit(employeeId) {
 
   document.getElementById(
     "employeeModal"
-  ).classList.remove("hidden");
+  ).classList.remove(
+    "hidden"
+  );
 
 }
 
@@ -2458,10 +3118,16 @@ function closeEmployeeModal() {
 
   document.getElementById(
     "employeeModal"
-  ).classList.add("hidden");
+  ).classList.add(
+    "hidden"
+  );
 
 }
 
+
+/* =====================================================
+   SAVE EMPLOYEE
+===================================================== */
 
 async function saveEmployee() {
 
@@ -2470,10 +3136,12 @@ async function saveEmployee() {
       "editEmployeeAdminId"
     ).value;
 
+
   const name =
     document.getElementById(
       "editEmployeeName"
     ).value.trim();
+
 
   const hourlyRate =
     Number(
@@ -2485,7 +3153,22 @@ async function saveEmployee() {
 
   if (!name) {
 
-    alert("スタッフ名を入力してください。");
+    alert(
+      "スタッフ名を入力してください。"
+    );
+
+    return;
+
+  }
+
+
+  if (
+    hourlyRate < 0
+  ) {
+
+    alert(
+      "時給を正しく入力してください。"
+    );
 
     return;
 
@@ -2499,20 +3182,28 @@ async function saveEmployee() {
       "PATCH",
       `?id=eq.${id}`,
       {
-        name: name,
-        hourly_rate: hourlyRate
+
+        name:
+          name,
+
+        hourly_rate:
+          hourlyRate
+
       }
     );
 
 
     closeEmployeeModal();
 
+
     await loadEmployeeAdmin();
 
     await loadEmployees();
 
 
-    alert("スタッフ情報を更新しました。");
+    alert(
+      "スタッフ情報を更新しました。"
+    );
 
   } catch (error) {
 
@@ -2530,7 +3221,9 @@ async function saveEmployee() {
    DEACTIVATE EMPLOYEE
 ===================================================== */
 
-async function deactivateEmployee(employeeId) {
+async function deactivateEmployee(
+  employeeId
+) {
 
   const employee =
     employees.find(
@@ -2539,21 +3232,31 @@ async function deactivateEmployee(employeeId) {
         String(employeeId)
     );
 
+
   if (!employee) return;
 
 
   const confirmed =
     confirm(
       `${employee.name} を無効化しますか？\n\n` +
-      `無効化すると、出勤画面には表示されなくなります。\n` +
+      `無効化すると、出勤画面から表示されなくなります。\n` +
       `過去の勤務記録・給与データは残ります。`
     );
 
 
-  if (!confirmed) return;
+  if (!confirmed) {
+
+    return;
+
+  }
 
 
   try {
+
+    /*
+     IMPORTANT:
+     Save active=false to Supabase.
+    */
 
     await supabaseRequest(
       "employees",
@@ -2565,19 +3268,63 @@ async function deactivateEmployee(employeeId) {
     );
 
 
-    await loadEmployeeAdmin();
+    /*
+     Update local array immediately.
+    */
+
+    const localEmployee =
+      employees.find(
+        e =>
+          String(e.id) ===
+          String(employeeId)
+      );
+
+
+    if (localEmployee) {
+
+      localEmployee.active =
+        false;
+
+    }
+
+
+    /*
+     Update manager screen.
+    */
+
+    renderEmployeeAdminList();
+
+
+    /*
+     Update homepage.
+    */
+
+    renderStaffList();
+
+
+    /*
+     Reload from database.
+    */
 
     await loadEmployees();
 
 
     alert(
-      `${employee.name} を無効化しました。`
+      `${employee.name} を無効化しました。\n\n` +
+      `出勤画面から非表示になりました。`
     );
+
 
   } catch (error) {
 
+    console.error(
+      "Deactivate error:",
+      error
+    );
+
+
     alert(
-      "無効化に失敗しました。\n" +
+      "無効化に失敗しました。\n\n" +
       error.message
     );
 
@@ -2590,7 +3337,9 @@ async function deactivateEmployee(employeeId) {
    REACTIVATE EMPLOYEE
 ===================================================== */
 
-async function reactivateEmployee(employeeId) {
+async function reactivateEmployee(
+  employeeId
+) {
 
   const employee =
     employees.find(
@@ -2598,6 +3347,7 @@ async function reactivateEmployee(employeeId) {
         String(e.id) ===
         String(employeeId)
     );
+
 
   if (!employee) return;
 
@@ -2614,19 +3364,46 @@ async function reactivateEmployee(employeeId) {
     );
 
 
-    await loadEmployeeAdmin();
+    const localEmployee =
+      employees.find(
+        e =>
+          String(e.id) ===
+          String(employeeId)
+      );
+
+
+    if (localEmployee) {
+
+      localEmployee.active =
+        true;
+
+    }
+
+
+    renderEmployeeAdminList();
+
+    renderStaffList();
+
 
     await loadEmployees();
 
 
     alert(
-      `${employee.name} を再有効化しました。`
+      `${employee.name} を再有効化しました。\n\n` +
+      `出勤画面に再表示されました。`
     );
+
 
   } catch (error) {
 
+    console.error(
+      "Reactivate error:",
+      error
+    );
+
+
     alert(
-      "再有効化に失敗しました。\n" +
+      "再有効化に失敗しました。\n\n" +
       error.message
     );
 
@@ -2645,7 +3422,10 @@ async function loadPayroll() {
     document.getElementById(
       "payrollMonth"
     ).value ||
-    managerSelectedDate.substring(0, 7);
+    managerSelectedDate.substring(
+      0,
+      7
+    );
 
 
   try {
@@ -2669,87 +3449,119 @@ async function loadPayroll() {
     payrollData = [];
 
 
-    let totalPayroll = 0;
+    let totalPayroll =
+      0;
 
 
-    allEmployees.forEach(employee => {
+    allEmployees.forEach(
+      employee => {
 
-      const employeeRecords =
-        records.filter(
-          r =>
-            String(r.employee_id) ===
-            String(employee.id)
-        );
+        const employeeRecords =
+          records.filter(
+            r =>
+              String(
+                r.employee_id
+              ) ===
+              String(
+                employee.id
+              )
+          );
 
-
-      if (!employeeRecords.length) {
-        return;
-      }
-
-
-      let totalMinutes = 0;
-
-      let workingDays = 0;
-
-      let incompleteDays = 0;
-
-
-      employeeRecords.forEach(record => {
 
         if (
-          record.clock_in &&
-          record.clock_out
+          !employeeRecords.length
         ) {
 
-          totalMinutes +=
-            calculateWorkMinutes(record);
-
-          workingDays++;
-
-        } else if (
-          record.clock_in &&
-          !record.clock_out
-        ) {
-
-          incompleteDays++;
+          return;
 
         }
 
-      });
+
+        let totalMinutes =
+          0;
 
 
-      const hourlyRate =
-        Number(employee.hourly_rate || 0);
+        let workingDays =
+          0;
 
 
-      const estimatedPay =
-        Math.round(
-          totalMinutes / 60 *
-          hourlyRate
+        let incompleteDays =
+          0;
+
+
+        employeeRecords.forEach(
+          record => {
+
+            if (
+              record.clock_in &&
+              record.clock_out
+            ) {
+
+              totalMinutes +=
+                calculateWorkMinutes(
+                  record
+                );
+
+
+              workingDays++;
+
+            }
+
+            else if (
+              record.clock_in &&
+              !record.clock_out
+            ) {
+
+              incompleteDays++;
+
+            }
+
+          }
         );
 
 
-      totalPayroll +=
-        estimatedPay;
+        const hourlyRate =
+          Number(
+            employee.hourly_rate || 0
+          );
 
 
-      payrollData.push({
+        const estimatedPay =
+          Math.round(
+            totalMinutes /
+            60 *
+            hourlyRate
+          );
 
-        employee,
 
-        workingDays,
+        totalPayroll +=
+          estimatedPay;
 
-        totalMinutes,
 
-        hourlyRate,
+        payrollData.push({
 
-        estimatedPay,
+          employee:
+            employee,
 
-        incompleteDays
+          workingDays:
+            workingDays,
 
-      });
+          totalMinutes:
+            totalMinutes,
 
-    });
+          hourlyRate:
+            hourlyRate,
+
+          estimatedPay:
+            estimatedPay,
+
+          incompleteDays:
+            incompleteDays
+
+        });
+
+      }
+    );
 
 
     renderPayroll(
@@ -2778,10 +3590,18 @@ async function loadPayroll() {
    NEXT MONTH
 ===================================================== */
 
-function getNextMonth(month) {
+function getNextMonth(
+  month
+) {
 
-  const [year, monthNumber] =
-    month.split("-").map(Number);
+  const [
+    year,
+    monthNumber
+  ] =
+    month
+      .split("-")
+      .map(Number);
+
 
   const date =
     new Date(
@@ -2790,13 +3610,19 @@ function getNextMonth(month) {
       1
     );
 
+
   const y =
     date.getFullYear();
+
 
   const m =
     String(
       date.getMonth() + 1
-    ).padStart(2, "0");
+    ).padStart(
+      2,
+      "0"
+    );
+
 
   return `${y}-${m}-01`;
 
@@ -2818,7 +3644,8 @@ function renderPayroll(
     );
 
 
-  let html = `
+  let html =
+    `
 
     <div class="total-box">
 
@@ -2836,137 +3663,172 @@ function renderPayroll(
 
     </div>
 
-  `;
+    `;
 
 
-  html += `
+  html +=
+    `
 
     <div class="card">
 
       <div class="notice">
 
-        <strong>給与計算について</strong><br>
+        <strong>
+          給与計算について
+        </strong>
 
-        これは概算給与です。<br>
+        <br>
+
+        これは概算給与です。
+
+        <br>
+
         残業割増・深夜割増・休日割増・税金・社会保険料・交通費などは含まれていません。
 
       </div>
 
     </div>
 
-  `;
+    `;
 
 
-  if (!payrollData.length) {
+  if (
+    !payrollData.length
+  ) {
 
-    html += `
+    html +=
+      `
+
       <div class="card empty">
         この月の勤務記録はありません。
       </div>
-    `;
 
-    container.innerHTML = html;
+      `;
+
+
+    container.innerHTML =
+      html;
+
 
     return;
 
   }
 
 
-  payrollData.forEach(item => {
+  payrollData.forEach(
+    item => {
 
-    html += `
+      html +=
+        `
 
-      <div class="payroll-row">
+        <div class="payroll-row">
 
-        <div class="employee-name">
+          <div class="employee-name">
 
-          ${escapeHtml(item.employee.name)}
+            ${escapeHtml(
+              item.employee.name
+            )}
 
-          ${
-            item.employee.active === false
+            ${
+              item.employee.active === false
 
-              ? `<span class="badge badge-inactive">
+              ? `
+                <span class="badge badge-inactive">
                   無効
-                </span>`
+                </span>
+                `
 
               : ""
+            }
+
+          </div>
+
+
+          <div class="payroll-grid">
+
+            <div class="payroll-item">
+
+              <div class="payroll-label">
+                勤務日数
+              </div>
+
+              <div class="payroll-value">
+                ${item.workingDays}日
+              </div>
+
+            </div>
+
+
+            <div class="payroll-item">
+
+              <div class="payroll-label">
+                実働時間
+              </div>
+
+              <div class="payroll-value">
+                ${formatWorkMinutes(
+                  item.totalMinutes
+                )}
+              </div>
+
+            </div>
+
+
+            <div class="payroll-item">
+
+              <div class="payroll-label">
+                時給
+              </div>
+
+              <div class="payroll-value">
+                ¥${item.hourlyRate.toLocaleString()}
+              </div>
+
+            </div>
+
+
+            <div class="payroll-item">
+
+              <div class="payroll-label">
+                概算給与
+              </div>
+
+              <div class="payroll-value">
+                ¥${item.estimatedPay.toLocaleString()}
+              </div>
+
+            </div>
+
+          </div>
+
+
+          ${
+            item.incompleteDays > 0
+
+            ? `
+              <div
+                class="warning-text"
+                style="margin-top:10px;">
+
+                ⚠ 未退勤
+                ${item.incompleteDays}件
+
+                <br>
+
+                （給与計算には含めていません）
+
+              </div>
+              `
+
+            : ""
           }
 
         </div>
 
+        `;
 
-        <div class="payroll-grid">
-
-          <div class="payroll-item">
-
-            <div class="payroll-label">
-              勤務日数
-            </div>
-
-            <div class="payroll-value">
-              ${item.workingDays}日
-            </div>
-
-          </div>
-
-
-          <div class="payroll-item">
-
-            <div class="payroll-label">
-              実働時間
-            </div>
-
-            <div class="payroll-value">
-              ${formatWorkMinutes(item.totalMinutes)}
-            </div>
-
-          </div>
-
-
-          <div class="payroll-item">
-
-            <div class="payroll-label">
-              時給
-            </div>
-
-            <div class="payroll-value">
-              ¥${item.hourlyRate.toLocaleString()}
-            </div>
-
-          </div>
-
-
-          <div class="payroll-item">
-
-            <div class="payroll-label">
-              概算給与
-            </div>
-
-            <div class="payroll-value">
-              ¥${item.estimatedPay.toLocaleString()}
-            </div>
-
-          </div>
-
-        </div>
-
-
-        ${
-          item.incompleteDays > 0
-
-            ? `<div class="warning-text" style="margin-top:10px;">
-                ⚠ 未退勤 ${item.incompleteDays}件
-                （給与計算には含めていません）
-              </div>`
-
-            : ""
-        }
-
-      </div>
-
-    `;
-
-  });
+    }
+  );
 
 
   container.innerHTML =
@@ -2981,9 +3843,13 @@ function renderPayroll(
 
 function exportDailyCSV() {
 
-  if (!attendanceRecords.length) {
+  if (
+    !attendanceRecords.length
+  ) {
 
-    alert("勤務記録がありません。");
+    alert(
+      "勤務記録がありません。"
+    );
 
     return;
 
@@ -2994,65 +3860,89 @@ function exportDailyCSV() {
     "日付,スタッフ名,出勤,退勤,休憩,実働時間,時給,概算給与\n";
 
 
-  attendanceRecords.forEach(record => {
+  attendanceRecords.forEach(
+    record => {
 
-    const employee =
-      employees.find(
-        e =>
-          String(e.id) ===
-          String(record.employee_id)
-      );
-
-
-    if (!employee) return;
-
-
-    const minutes =
-      record.clock_out
-        ? calculateWorkMinutes(record)
-        : 0;
+      const employee =
+        employees.find(
+          e =>
+            String(
+              e.id
+            ) ===
+            String(
+              record.employee_id
+            )
+        );
 
 
-    const hourlyRate =
-      Number(employee.hourly_rate || 0);
+      if (!employee) return;
 
 
-    const pay =
-      record.clock_out
-        ? Math.round(
-            minutes / 60 *
-            hourlyRate
-          )
-        : 0;
+      const minutes =
+        record.clock_out
+          ? calculateWorkMinutes(
+              record
+            )
+          : 0;
 
 
-    csv += [
+      const hourlyRate =
+        Number(
+          employee.hourly_rate || 0
+        );
 
-      managerSelectedDate,
 
-      employee.name,
+      const pay =
+        record.clock_out
 
-      formatDateTime(record.clock_in),
+          ? Math.round(
+              minutes /
+              60 *
+              hourlyRate
+            )
 
-      record.clock_out
-        ? formatDateTime(record.clock_out)
-        : "未退勤",
+          : 0;
 
-      record.break_minutes || 0,
 
-      record.clock_out
-        ? formatWorkMinutes(minutes)
-        : "未計算",
+      csv += [
 
-      hourlyRate,
+        managerSelectedDate,
 
-      pay
+        employee.name,
 
-    ]
-    .map(csvEscape)
-    .join(",") + "\n";
+        formatDateTime(
+          record.clock_in
+        ),
 
-  });
+        record.clock_out
+
+          ? formatDateTime(
+              record.clock_out
+            )
+
+          : "未退勤",
+
+        record.break_minutes || 0,
+
+        record.clock_out
+
+          ? formatWorkMinutes(
+              minutes
+            )
+
+          : "未計算",
+
+        hourlyRate,
+
+        pay
+
+      ]
+      .map(csvEscape)
+      .join(",") +
+      "\n";
+
+    }
+  );
 
 
   downloadCSV(
@@ -3069,9 +3959,13 @@ function exportDailyCSV() {
 
 function exportPayrollCSV() {
 
-  if (!payrollData.length) {
+  if (
+    !payrollData.length
+  ) {
 
-    alert("給与データがありません。");
+    alert(
+      "給与データがありません。"
+    );
 
     return;
 
@@ -3088,29 +3982,32 @@ function exportPayrollCSV() {
     "スタッフ名,勤務日数,実働時間,時給,概算給与,未退勤件数\n";
 
 
-  payrollData.forEach(item => {
+  payrollData.forEach(
+    item => {
 
-    csv += [
+      csv += [
 
-      item.employee.name,
+        item.employee.name,
 
-      item.workingDays,
+        item.workingDays,
 
-      formatWorkMinutes(
-        item.totalMinutes
-      ),
+        formatWorkMinutes(
+          item.totalMinutes
+        ),
 
-      item.hourlyRate,
+        item.hourlyRate,
 
-      item.estimatedPay,
+        item.estimatedPay,
 
-      item.incompleteDays
+        item.incompleteDays
 
-    ]
-    .map(csvEscape)
-    .join(",") + "\n";
+      ]
+      .map(csvEscape)
+      .join(",") +
+      "\n";
 
-  });
+    }
+  );
 
 
   downloadCSV(
@@ -3122,13 +4019,18 @@ function exportPayrollCSV() {
 
 
 /* =====================================================
-   CSV HELPERS
+   CSV
 ===================================================== */
 
-function csvEscape(value) {
+function csvEscape(
+  value
+) {
 
   const string =
-    String(value ?? "");
+    String(
+      value ?? ""
+    );
+
 
   return `"${string.replace(
     /"/g,
@@ -3146,59 +4048,117 @@ function downloadCSV(
   const bom =
     "\uFEFF";
 
+
   const blob =
     new Blob(
-      [bom + csv],
+      [
+        bom + csv
+      ],
       {
-        type: "text/csv;charset=utf-8;"
+        type:
+          "text/csv;charset=utf-8;"
       }
     );
 
 
   const url =
-    URL.createObjectURL(blob);
+    URL.createObjectURL(
+      blob
+    );
+
 
   const link =
-    document.createElement("a");
+    document.createElement(
+      "a"
+    );
 
-  link.href = url;
 
-  link.download = filename;
+  link.href =
+    url;
 
-  document.body.appendChild(link);
+
+  link.download =
+    filename;
+
+
+  document.body.appendChild(
+    link
+  );
+
 
   link.click();
 
-  document.body.removeChild(link);
 
-  URL.revokeObjectURL(url);
+  document.body.removeChild(
+    link
+  );
+
+
+  URL.revokeObjectURL(
+    url
+  );
 
 }
 
 
 /* =====================================================
-   SECURITY / HTML HELPERS
+   ESCAPE
 ===================================================== */
 
-function escapeHtml(value) {
+function escapeHtml(
+  value
+) {
 
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+  return String(
+    value ?? ""
+  )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
+  );
 
 }
 
 
-function escapeJs(value) {
+function escapeJs(
+  value
+) {
 
-  return String(value ?? "")
-    .replace(/\\/g, "\\\\")
-    .replace(/'/g, "\\'")
-    .replace(/\n/g, "\\n")
-    .replace(/\r/g, "");
+  return String(
+    value ?? ""
+  )
+  .replace(
+    /\\/g,
+    "\\\\"
+  )
+  .replace(
+    /'/g,
+    "\\'"
+  )
+  .replace(
+    /\n/g,
+    "\\n"
+  )
+  .replace(
+    /\r/g,
+    ""
+  );
 
 }
 
