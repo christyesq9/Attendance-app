@@ -274,11 +274,15 @@ th {
 .danger-notice {
   background: #ffe5e5;
   color: #9b111e;
+  padding: 12px;
+  border-radius: 10px;
 }
 
 .success-notice {
   background: #e4f7ec;
   color: #176b3c;
+  padding: 12px;
+  border-radius: 10px;
 }
 
 .shift-row {
@@ -296,6 +300,11 @@ th {
 .shift-details {
   margin-top: 8px;
   color: #555;
+}
+
+.delete-working {
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 @media (max-width: 600px) {
@@ -318,29 +327,33 @@ th {
 
 <div class="container">
 
-  <!-- ========================= -->
-  <!-- STAFF HOME -->
-  <!-- ========================= -->
-
+  <!-- STAFF SCREEN -->
   <div id="staffScreen">
 
     <div class="card center">
       <h1>Sugar Tree Okinawa</h1>
       <h2>出退勤管理</h2>
 
-      <div id="currentTime" class="big-time">--:--:--</div>
-      <div id="currentDate" class="big-date">----</div>
+      <div id="currentTime" class="big-time">
+        --:--:--
+      </div>
+
+      <div id="currentDate" class="big-date">
+        ----
+      </div>
     </div>
 
     <div class="card">
       <h3>スタッフを選択してください</h3>
+
       <div id="staffGrid" class="staff-grid">
         読み込み中...
       </div>
     </div>
 
     <div class="card center">
-      <button class="gray" onclick="openManagerLogin()">
+      <button class="gray"
+              onclick="openManagerLogin()">
         🔐 管理者
       </button>
     </div>
@@ -348,24 +361,29 @@ th {
   </div>
 
 
-  <!-- ========================= -->
   <!-- MANAGER SCREEN -->
-  <!-- ========================= -->
-
   <div id="managerScreen" class="hidden">
 
     <div class="card">
+
       <div class="row">
+
         <div>
           <h2>管理者画面</h2>
-          <div class="small">Sugar Tree Okinawa</div>
+          <div class="small">
+            Sugar Tree Okinawa
+          </div>
         </div>
 
-        <button class="gray" onclick="logoutManager()">
+        <button class="gray"
+                onclick="logoutManager()">
           ログアウト
         </button>
+
       </div>
+
     </div>
+
 
     <div class="manager-tabs">
 
@@ -393,27 +411,27 @@ th {
     </div>
 
 
-    <!-- ========================= -->
-    <!-- DAILY -->
-    <!-- ========================= -->
-
+    <!-- DAILY TAB -->
     <div id="dailyTab">
 
       <div class="card">
 
         <div class="row">
 
-          <button class="gray" onclick="changeManagerDate(-1)">
+          <button class="gray"
+                  onclick="changeManagerDate(-1)">
             ← 前日
           </button>
 
-          <input
-            type="date"
-            id="managerDate"
-            onchange="managerSelectedDate=this.value; loadDailyAttendance();"
-          >
+          <input type="date"
+                 id="managerDate"
+                 onchange="
+                   managerSelectedDate=this.value;
+                   loadDailyAttendance();
+                 ">
 
-          <button class="gray" onclick="changeManagerDate(1)">
+          <button class="gray"
+                  onclick="changeManagerDate(1)">
             翌日 →
           </button>
 
@@ -421,15 +439,18 @@ th {
 
         <div class="row">
 
-          <button class="blue" onclick="openBulkEntry()">
+          <button class="blue"
+                  onclick="openBulkEntry()">
             ✏️ 一括入力
           </button>
 
-          <button class="gray" onclick="loadDailyAttendance()">
+          <button class="gray"
+                  onclick="loadDailyAttendance()">
             🔄 更新
           </button>
 
-          <button class="green" onclick="exportDailyCSV()">
+          <button class="green"
+                  onclick="exportDailyCSV()">
             📥 CSV
           </button>
 
@@ -439,7 +460,9 @@ th {
 
       <div class="card">
 
-        <h3 id="dailyTitle">勤務状況</h3>
+        <h3 id="dailyTitle">
+          勤務状況
+        </h3>
 
         <div id="dailyAttendance">
           読み込み中...
@@ -450,23 +473,20 @@ th {
     </div>
 
 
-    <!-- ========================= -->
-    <!-- PAYROLL -->
-    <!-- ========================= -->
-
-    <div id="payrollTab" class="hidden">
+    <!-- PAYROLL TAB -->
+    <div id="payrollTab"
+         class="hidden">
 
       <div class="card">
 
         <h3>月間給与計算</h3>
 
-        <input
-          type="month"
-          id="payrollMonth"
-          onchange="loadPayroll()"
-        >
+        <input type="month"
+               id="payrollMonth"
+               onchange="loadPayroll()">
 
-        <button class="green" onclick="exportMonthlyCSV()">
+        <button class="green"
+                onclick="exportMonthlyCSV()">
           📥 月間CSV
         </button>
 
@@ -506,11 +526,9 @@ th {
     </div>
 
 
-    <!-- ========================= -->
-    <!-- STAFF MANAGEMENT -->
-    <!-- ========================= -->
-
-    <div id="staffTab" class="hidden">
+    <!-- STAFF TAB -->
+    <div id="staffTab"
+         class="hidden">
 
       <div class="card">
 
@@ -518,24 +536,21 @@ th {
 
         <label>
           スタッフ名
-          <input
-            type="text"
-            id="newStaffName"
-            placeholder="例：山田太郎"
-          >
+          <input type="text"
+                 id="newStaffName"
+                 placeholder="例：山田太郎">
         </label>
 
         <label>
           時給
-          <input
-            type="number"
-            id="newStaffHourlyRate"
-            placeholder="例：1200"
-            min="0"
-          >
+          <input type="number"
+                 id="newStaffHourlyRate"
+                 placeholder="例：1200"
+                 min="0">
         </label>
 
-        <button class="green" onclick="addStaff()">
+        <button class="green"
+                onclick="addStaff()">
           ＋ スタッフ追加
         </button>
 
@@ -555,11 +570,9 @@ th {
     </div>
 
 
-    <!-- ========================= -->
     <!-- SETTINGS -->
-    <!-- ========================= -->
-
-    <div id="settingsTab" class="hidden">
+    <div id="settingsTab"
+         class="hidden">
 
       <div class="card">
 
@@ -569,15 +582,14 @@ th {
           4〜8桁の数字を設定してください。
         </p>
 
-        <input
-          type="password"
-          id="newManagerPin"
-          inputmode="numeric"
-          maxlength="8"
-          placeholder="新しいPIN"
-        >
+        <input type="password"
+               id="newManagerPin"
+               inputmode="numeric"
+               maxlength="8"
+               placeholder="新しいPIN">
 
-        <button class="primary" onclick="changeManagerPin()">
+        <button class="primary"
+                onclick="changeManagerPin()">
           PINを変更
         </button>
 
@@ -590,32 +602,31 @@ th {
 </div>
 
 
-<!-- ========================= -->
-<!-- MANAGER LOGIN MODAL -->
-<!-- ========================= -->
-
-<div id="managerLoginModal" class="modal hidden">
+<!-- MANAGER LOGIN -->
+<div id="managerLoginModal"
+     class="modal hidden">
 
   <div class="modal-content">
 
     <div class="modal-header">
+
       <h3>管理者ログイン</h3>
 
       <button class="close-button"
               onclick="closeModal('managerLoginModal')">
         ×
       </button>
+
     </div>
 
-    <input
-      type="password"
-      id="managerPinInput"
-      inputmode="numeric"
-      maxlength="8"
-      placeholder="PIN"
-    >
+    <input type="password"
+           id="managerPinInput"
+           inputmode="numeric"
+           maxlength="8"
+           placeholder="PIN">
 
-    <button class="primary" onclick="managerLogin()">
+    <button class="primary"
+            onclick="managerLogin()">
       ログイン
     </button>
 
@@ -624,11 +635,9 @@ th {
 </div>
 
 
-<!-- ========================= -->
-<!-- EDIT ATTENDANCE MODAL -->
-<!-- ========================= -->
-
-<div id="editAttendanceModal" class="modal hidden">
+<!-- EDIT ATTENDANCE -->
+<div id="editAttendanceModal"
+     class="modal hidden">
 
   <div class="modal-content">
 
@@ -645,7 +654,8 @@ th {
 
     </div>
 
-    <input type="hidden" id="editAttendanceId">
+    <input type="hidden"
+           id="editAttendanceId">
 
     <label>
       スタッフ
@@ -654,32 +664,34 @@ th {
 
     <label>
       日付
-      <input type="date" id="editAttendanceDate">
+      <input type="date"
+             id="editAttendanceDate">
     </label>
 
     <label>
       出勤
-      <input type="datetime-local" id="editClockIn">
+      <input type="datetime-local"
+             id="editClockIn">
     </label>
 
     <label>
       退勤
-      <input type="datetime-local" id="editClockOut">
+      <input type="datetime-local"
+             id="editClockOut">
     </label>
 
     <label>
       休憩（分）
-      <input
-        type="number"
-        id="editBreakMinutes"
-        min="0"
-        value="0"
-      >
+      <input type="number"
+             id="editBreakMinutes"
+             min="0"
+             value="0">
     </label>
 
     <div class="row">
 
-      <button class="primary" onclick="saveEdit()">
+      <button class="primary"
+              onclick="saveEdit()">
         💾 保存
       </button>
 
@@ -695,11 +707,9 @@ th {
 </div>
 
 
-<!-- ========================= -->
-<!-- BULK ENTRY MODAL -->
-<!-- ========================= -->
-
-<div id="bulkEntryModal" class="modal hidden">
+<!-- BULK ENTRY -->
+<div id="bulkEntryModal"
+     class="modal hidden">
 
   <div class="modal-content">
 
@@ -730,11 +740,9 @@ th {
 </div>
 
 
-<!-- ========================= -->
-<!-- STAFF EDIT MODAL -->
-<!-- ========================= -->
-
-<div id="editStaffModal" class="modal hidden">
+<!-- EDIT STAFF -->
+<div id="editStaffModal"
+     class="modal hidden">
 
   <div class="modal-content">
 
@@ -749,11 +757,13 @@ th {
 
     </div>
 
-    <input type="hidden" id="editStaffId">
+    <input type="hidden"
+           id="editStaffId">
 
     <label>
       スタッフ名
-      <input type="text" id="editStaffName">
+      <input type="text"
+             id="editStaffName">
     </label>
 
     <label>
@@ -773,21 +783,17 @@ th {
 </div>
 
 
-<!-- ========================= -->
-<!-- STAFF HISTORY MODAL -->
-<!-- ========================= -->
-
-<div id="historyModal" class="modal hidden">
+<!-- STAFF HISTORY -->
+<div id="historyModal"
+     class="modal hidden">
 
   <div class="modal-content">
 
     <div class="modal-header">
 
-      <div>
-        <h3 id="historyStaffName">
-          勤務履歴
-        </h3>
-      </div>
+      <h3 id="historyStaffName">
+        勤務履歴
+      </h3>
 
       <button class="close-button"
               onclick="closeModal('historyModal')">
@@ -796,7 +802,8 @@ th {
 
     </div>
 
-    <input type="hidden" id="historyEmployeeId">
+    <input type="hidden"
+           id="historyEmployeeId">
 
     <div class="row">
 
@@ -805,11 +812,9 @@ th {
         ← 前月
       </button>
 
-      <input
-        type="month"
-        id="historyMonth"
-        onchange="loadStaffHistory()"
-      >
+      <input type="month"
+             id="historyMonth"
+             onchange="loadStaffHistory()">
 
       <button class="gray"
               onclick="changeHistoryMonth(1)">
@@ -831,9 +836,9 @@ th {
 
 <script>
 
-/* =========================================================
+/* =====================================================
    SUPABASE
-========================================================= */
+===================================================== */
 
 const SUPABASE_URL =
   "https://yxlcnyxuziukptvtmgub.supabase.co";
@@ -842,19 +847,20 @@ const SUPABASE_KEY =
   "sb_publishable_4p3StZjP4BQA_NE7b9oMDQ_N2DeHvn5";
 
 
-/* =========================================================
+/* =====================================================
    SETTINGS
-========================================================= */
+===================================================== */
 
-const DEFAULT_MANAGER_PIN = "1234";
+const DEFAULT_MANAGER_PIN =
+  "1234";
 
 const MANAGER_PIN_KEY =
   "sugarTreeManagerPin";
 
 
-/* =========================================================
+/* =====================================================
    STATE
-========================================================= */
+===================================================== */
 
 let employees = [];
 
@@ -862,12 +868,10 @@ let managerSelectedDate = "";
 
 let historyMonth = "";
 
-let currentHistoryEmployee = null;
 
-
-/* =========================================================
+/* =====================================================
    SUPABASE REQUEST
-========================================================= */
+===================================================== */
 
 async function supabaseRequest(
   table,
@@ -901,7 +905,8 @@ async function supabaseRequest(
   };
 
   if (body !== null) {
-    options.body = JSON.stringify(body);
+    options.body =
+      JSON.stringify(body);
   }
 
   const response =
@@ -918,7 +923,10 @@ async function supabaseRequest(
       text
     );
 
-    throw new Error(text);
+    throw new Error(
+      text ||
+      `HTTP ${response.status}`
+    );
   }
 
   if (!text) {
@@ -926,35 +934,21 @@ async function supabaseRequest(
   }
 
   try {
+
     return JSON.parse(text);
+
   } catch {
+
     return [];
+
   }
-}
-
-
-/* =========================================================
-   JAPAN DATE / TIME
-========================================================= */
-
-function getJapanDateTime() {
-
-  return new Intl.DateTimeFormat(
-    "en-CA",
-    {
-      timeZone: "Asia/Tokyo",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false
-    }
-  ).formatToParts(new Date());
 
 }
 
+
+/* =====================================================
+   JAPAN DATE
+===================================================== */
 
 function getJapanDate() {
 
@@ -972,27 +966,34 @@ function getJapanDate() {
   const obj = {};
 
   parts.forEach(p => {
+
     if (p.type !== "literal") {
       obj[p.type] = p.value;
     }
+
   });
 
   return `${obj.year}-${obj.month}-${obj.day}`;
+
 }
 
 
 function getJapanMonth() {
 
-  return getJapanDate().substring(0, 7);
+  return getJapanDate()
+    .substring(0, 7);
 
 }
 
 
-function formatDateTimeForInput(iso) {
+function formatDateTimeForInput(
+  iso
+) {
 
   if (!iso) return "";
 
-  const date = new Date(iso);
+  const date =
+    new Date(iso);
 
   const parts =
     new Intl.DateTimeFormat(
@@ -1011,41 +1012,51 @@ function formatDateTimeForInput(iso) {
   const obj = {};
 
   parts.forEach(p => {
+
     if (p.type !== "literal") {
       obj[p.type] = p.value;
     }
+
   });
 
   return `${obj.year}-${obj.month}-${obj.day}T${obj.hour}:${obj.minute}`;
+
 }
 
 
-function localDateTimeToISO(value) {
+function localDateTimeToISO(
+  value
+) {
 
   if (!value) return null;
 
-  return new Date(value).toISOString();
+  return new Date(value)
+    .toISOString();
 
 }
 
 
-/* =========================================================
-   CLOCK
-========================================================= */
+/* =====================================================
+   LIVE CLOCK
+===================================================== */
 
 function updateClock() {
 
-  const now = getJapanDateTime();
-
   const timeEl =
-    document.getElementById("currentTime");
+    document.getElementById(
+      "currentTime"
+    );
 
   const dateEl =
-    document.getElementById("currentDate");
+    document.getElementById(
+      "currentDate"
+    );
 
-  if (!timeEl || !dateEl) return;
+  if (!timeEl || !dateEl) {
+    return;
+  }
 
-  const timeParts =
+  const time =
     new Intl.DateTimeFormat(
       "ja-JP",
       {
@@ -1054,15 +1065,7 @@ function updateClock() {
         minute: "2-digit",
         second: "2-digit"
       }
-    ).formatToParts(new Date());
-
-  const time =
-    timeParts
-      .filter(p =>
-        ["hour","minute","second"].includes(p.type)
-      )
-      .map(p => p.value)
-      .join(":");
+    ).format(new Date());
 
   const date =
     new Intl.DateTimeFormat(
@@ -1076,39 +1079,52 @@ function updateClock() {
       }
     ).format(new Date());
 
-  timeEl.textContent = time;
-  dateEl.textContent = date;
+  timeEl.textContent =
+    time;
+
+  dateEl.textContent =
+    date;
+
 }
 
-setInterval(updateClock, 1000);
+setInterval(
+  updateClock,
+  1000
+);
+
 updateClock();
 
 
-/* =========================================================
+/* =====================================================
    INITIAL LOAD
-========================================================= */
+===================================================== */
 
-window.addEventListener("load", async () => {
+window.addEventListener(
+  "load",
+  async () => {
 
-  managerSelectedDate =
-    getJapanDate();
+    managerSelectedDate =
+      getJapanDate();
 
-  document.getElementById(
-    "managerDate"
-  ).value = managerSelectedDate;
+    document.getElementById(
+      "managerDate"
+    ).value =
+      managerSelectedDate;
 
-  document.getElementById(
-    "payrollMonth"
-  ).value = getJapanMonth();
+    document.getElementById(
+      "payrollMonth"
+    ).value =
+      getJapanMonth();
 
-  await loadEmployees();
+    await loadEmployees();
 
-});
+  }
+);
 
 
-/* =========================================================
+/* =====================================================
    EMPLOYEES
-========================================================= */
+===================================================== */
 
 async function loadEmployees() {
 
@@ -1130,9 +1146,11 @@ async function loadEmployees() {
     document.getElementById(
       "staffGrid"
     ).innerHTML =
-      `<div class="danger-notice">
+      `
+      <div class="danger-notice">
         スタッフ情報を読み込めませんでした。
-      </div>`;
+      </div>
+      `;
 
   }
 
@@ -1142,29 +1160,36 @@ async function loadEmployees() {
 function getActiveEmployees() {
 
   return employees.filter(
-    employee => employee.active !== false
+    employee =>
+      employee.active !== false
   );
 
 }
 
 
-function getEmployee(employeeId) {
+function getEmployee(
+  employeeId
+) {
 
   return employees.find(
-    e => String(e.id) === String(employeeId)
+    e =>
+      String(e.id) ===
+      String(employeeId)
   );
 
 }
 
 
-/* =========================================================
+/* =====================================================
    STAFF HOME
-========================================================= */
+===================================================== */
 
-async function renderStaffGrid() {
+function renderStaffGrid() {
 
   const grid =
-    document.getElementById("staffGrid");
+    document.getElementById(
+      "staffGrid"
+    );
 
   const activeEmployees =
     getActiveEmployees();
@@ -1172,31 +1197,38 @@ async function renderStaffGrid() {
   if (!activeEmployees.length) {
 
     grid.innerHTML =
-      `<div class="notice">
+      `
+      <div class="notice">
         現在、登録されているスタッフがありません。
-      </div>`;
+      </div>
+      `;
 
     return;
+
   }
 
   grid.innerHTML =
-    activeEmployees.map(employee => {
+    activeEmployees
+      .map(employee => {
 
-      return `
-        <button
-          class="staff-button"
-          onclick="selectStaff(${employee.id})"
-        >
-          👤 ${escapeHTML(employee.name)}
-        </button>
-      `;
+        return `
+          <button
+            class="staff-button"
+            onclick="selectStaff(${employee.id})"
+          >
+            👤 ${escapeHTML(employee.name)}
+          </button>
+        `;
 
-    }).join("");
+      })
+      .join("");
 
 }
 
 
-async function selectStaff(employeeId) {
+async function selectStaff(
+  employeeId
+) {
 
   const employee =
     getEmployee(employeeId);
@@ -1215,30 +1247,35 @@ async function selectStaff(employeeId) {
       );
 
     const record =
-      choosePrimaryAttendanceRecord(records);
+      choosePrimaryAttendanceRecord(
+        records
+      );
 
-    if (record && record.clock_in && !record.clock_out) {
-
-      const now =
-        new Date();
-
-      const clockIn =
-        new Date(record.clock_in);
+    if (
+      record &&
+      record.clock_in &&
+      !record.clock_out
+    ) {
 
       const elapsed =
-        now - clockIn;
+        new Date() -
+        new Date(record.clock_in);
 
       const hours =
-        Math.floor(elapsed / 3600000);
+        Math.floor(
+          elapsed / 3600000
+        );
 
       const minutes =
         Math.floor(
-          (elapsed % 3600000) / 60000
+          (elapsed % 3600000) /
+          60000
         );
 
       const seconds =
         Math.floor(
-          (elapsed % 60000) / 1000
+          (elapsed % 60000) /
+          1000
         );
 
       const answer =
@@ -1259,9 +1296,14 @@ async function selectStaff(employeeId) {
       }
 
       return;
+
     }
 
-    if (record && record.clock_in && record.clock_out) {
+    if (
+      record &&
+      record.clock_in &&
+      record.clock_out
+    ) {
 
       alert(
         `${employee.name}さんは本日すでに退勤済みです。\n\n` +
@@ -1270,6 +1312,7 @@ async function selectStaff(employeeId) {
       );
 
       return;
+
     }
 
     const answer =
@@ -1298,9 +1341,9 @@ async function selectStaff(employeeId) {
 }
 
 
-/* =========================================================
-   ONE SHIFT PER EMPLOYEE / DATE
-========================================================= */
+/* =====================================================
+   ONE SHIFT PER DAY
+===================================================== */
 
 async function getAttendanceForEmployeeDate(
   employeeId,
@@ -1318,48 +1361,54 @@ async function getAttendanceForEmployeeDate(
 }
 
 
-function choosePrimaryAttendanceRecord(records) {
+function choosePrimaryAttendanceRecord(
+  records
+) {
 
-  if (!records || !records.length) {
+  if (
+    !records ||
+    !records.length
+  ) {
     return null;
   }
 
-  const sorted =
-    [...records].sort((a, b) => {
+  return [...records].sort(
+    (a, b) => {
 
       const aTime =
         a.clock_in
-          ? new Date(a.clock_in).getTime()
+          ? new Date(
+              a.clock_in
+            ).getTime()
           : 0;
 
       const bTime =
         b.clock_in
-          ? new Date(b.clock_in).getTime()
+          ? new Date(
+              b.clock_in
+            ).getTime()
           : 0;
 
-      if (bTime !== aTime) {
+      if (
+        bTime !== aTime
+      ) {
         return bTime - aTime;
       }
 
       return String(b.id)
-        .localeCompare(String(a.id));
+        .localeCompare(
+          String(a.id)
+        );
 
-    });
-
-  return sorted[0];
+    }
+  )[0];
 
 }
 
 
-/*
-  Existing duplicate records are consolidated in memory.
-
-  Priority:
-  1. record with clock_in
-  2. latest clock_in
-  3. latest id
-*/
-function dedupeAttendanceRecords(records) {
+function dedupeAttendanceRecords(
+  records
+) {
 
   const map =
     new Map();
@@ -1371,17 +1420,17 @@ function dedupeAttendanceRecords(records) {
 
     if (!map.has(key)) {
 
-      map.set(key, record);
+      map.set(
+        key,
+        record
+      );
 
     } else {
-
-      const existing =
-        map.get(key);
 
       map.set(
         key,
         choosePrimaryAttendanceRecord([
-          existing,
+          map.get(key),
           record
         ])
       );
@@ -1390,21 +1439,25 @@ function dedupeAttendanceRecords(records) {
 
   });
 
-  return Array.from(map.values());
+  return Array.from(
+    map.values()
+  );
 
 }
 
 
-/* =========================================================
+/* =====================================================
    CLOCK IN
-========================================================= */
+===================================================== */
 
-async function clockIn(employeeId) {
+async function clockIn(
+  employeeId
+) {
 
   const today =
     getJapanDate();
 
-  const existingRecords =
+  const records =
     await getAttendanceForEmployeeDate(
       employeeId,
       today
@@ -1412,7 +1465,7 @@ async function clockIn(employeeId) {
 
   const existing =
     choosePrimaryAttendanceRecord(
-      existingRecords
+      records
     );
 
   if (existing) {
@@ -1422,69 +1475,66 @@ async function clockIn(employeeId) {
       !existing.clock_out
     ) {
 
-      alert("すでに出勤しています。");
+      alert(
+        "すでに出勤しています。"
+      );
+
       return;
 
     }
 
-    /*
-      Important:
-      Never create another record for the same
-      employee/date. Reuse the existing row.
-    */
+    await supabaseRequest(
+      "attendance",
+      "PATCH",
+      `?id=eq.${existing.id}`,
+      {
+        clock_in:
+          new Date().toISOString(),
 
-    const result =
-      await supabaseRequest(
-        "attendance",
-        "PATCH",
-        `?id=eq.${existing.id}`,
-        {
-          clock_in: new Date().toISOString(),
-          clock_out: null,
-          break_minutes: 0,
-          work_date: today
-        }
-      );
+        clock_out:
+          null,
 
-    if (!result.length) {
-      throw new Error(
-        "出勤データを更新できませんでした。"
-      );
-    }
+        break_minutes:
+          0
+      }
+    );
 
     alert("出勤しました。");
 
     return;
+
   }
 
-  const result =
-    await supabaseRequest(
-      "attendance",
-      "POST",
-      "",
-      {
-        employee_id: employeeId,
-        work_date: today,
-        clock_in: new Date().toISOString(),
-        clock_out: null,
-        break_minutes: 0
-      }
-    );
+  await supabaseRequest(
+    "attendance",
+    "POST",
+    "",
+    {
+      employee_id:
+        employeeId,
 
-  if (!result.length) {
-    throw new Error(
-      "出勤データを登録できませんでした。"
-    );
-  }
+      work_date:
+        today,
+
+      clock_in:
+        new Date().toISOString(),
+
+      clock_out:
+        null,
+
+      break_minutes:
+        0
+    }
+  );
 
   alert("出勤しました。");
 
 }
 
 
-/* =========================================================
+/* =====================================================
    CLOCK OUT
-========================================================= */
+===================================================== */
 
 async function clockOut(
   employeeId,
@@ -1492,8 +1542,13 @@ async function clockOut(
 ) {
 
   if (!record) {
-    alert("勤務データが見つかりません。");
+
+    alert(
+      "勤務データが見つかりません。"
+    );
+
     return;
+
   }
 
   const breakInput =
@@ -1514,7 +1569,10 @@ async function clockOut(
     breakMinutes < 0
   ) {
 
-    alert("休憩時間を正しく入力してください。");
+    alert(
+      "休憩時間を正しく入力してください。"
+    );
+
     return;
 
   }
@@ -1537,9 +1595,9 @@ async function clockOut(
 }
 
 
-/* =========================================================
+/* =====================================================
    MANAGER LOGIN
-========================================================= */
+===================================================== */
 
 function openManagerLogin() {
 
@@ -1547,7 +1605,9 @@ function openManagerLogin() {
     "managerPinInput"
   ).value = "";
 
-  openModal("managerLoginModal");
+  openModal(
+    "managerLoginModal"
+  );
 
 }
 
@@ -1555,8 +1615,10 @@ function openManagerLogin() {
 function getManagerPin() {
 
   return (
-    localStorage.getItem(MANAGER_PIN_KEY)
-    || DEFAULT_MANAGER_PIN
+    localStorage.getItem(
+      MANAGER_PIN_KEY
+    ) ||
+    DEFAULT_MANAGER_PIN
   );
 
 }
@@ -1569,7 +1631,9 @@ function managerLogin() {
       "managerPinInput"
     ).value;
 
-  if (input === getManagerPin()) {
+  if (
+    input === getManagerPin()
+  ) {
 
     closeModal(
       "managerLoginModal"
@@ -1577,17 +1641,23 @@ function managerLogin() {
 
     document.getElementById(
       "staffScreen"
-    ).classList.add("hidden");
+    ).classList.add(
+      "hidden"
+    );
 
     document.getElementById(
       "managerScreen"
-    ).classList.remove("hidden");
+    ).classList.remove(
+      "hidden"
+    );
 
     loadDailyAttendance();
 
   } else {
 
-    alert("PINが違います。");
+    alert(
+      "PINが違います。"
+    );
 
   }
 
@@ -1598,20 +1668,26 @@ function logoutManager() {
 
   document.getElementById(
     "managerScreen"
-  ).classList.add("hidden");
+  ).classList.add(
+    "hidden"
+  );
 
   document.getElementById(
     "staffScreen"
-  ).classList.remove("hidden");
+  ).classList.remove(
+    "hidden"
+  );
 
 }
 
 
-/* =========================================================
-   MANAGER TABS
-========================================================= */
+/* =====================================================
+   TABS
+===================================================== */
 
-function showManagerTab(tab) {
+function showManagerTab(
+  tab
+) {
 
   const tabs = [
     "daily",
@@ -1634,22 +1710,26 @@ function showManagerTab(tab) {
   document.querySelectorAll(
     ".manager-tabs button"
   ).forEach(button => {
+
     button.classList.remove(
       "tab-active"
     );
+
   });
 
-  const activeButton =
+  const button =
     document.getElementById(
       "tab" +
       tab.charAt(0).toUpperCase() +
       tab.slice(1)
     );
 
-  if (activeButton) {
-    activeButton.classList.add(
+  if (button) {
+
+    button.classList.add(
       "tab-active"
     );
+
   }
 
   if (tab === "daily") {
@@ -1667,11 +1747,13 @@ function showManagerTab(tab) {
 }
 
 
-/* =========================================================
-   MANAGER DATE
-========================================================= */
+/* =====================================================
+   DATE NAVIGATION
+===================================================== */
 
-function changeManagerDate(days) {
+function changeManagerDate(
+  days
+) {
 
   const parts =
     managerSelectedDate.split("-");
@@ -1695,20 +1777,18 @@ function changeManagerDate(days) {
     );
 
   date.setUTCDate(
-    date.getUTCDate() + days
+    date.getUTCDate() +
+    days
   );
 
-  year =
-    date.getUTCFullYear();
-
-  month =
-    date.getUTCMonth() + 1;
-
-  day =
-    date.getUTCDate();
-
   managerSelectedDate =
-    `${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+    `${date.getUTCFullYear()}-` +
+    `${String(
+      date.getUTCMonth() + 1
+    ).padStart(2,"0")}-` +
+    `${String(
+      date.getUTCDate()
+    ).padStart(2,"0")}`;
 
   document.getElementById(
     "managerDate"
@@ -1720,9 +1800,9 @@ function changeManagerDate(days) {
 }
 
 
-/* =========================================================
-   DAILY ATTENDANCE
-========================================================= */
+/* =====================================================
+   DAILY
+===================================================== */
 
 async function loadDailyAttendance() {
 
@@ -1732,7 +1812,8 @@ async function loadDailyAttendance() {
 
   document.getElementById(
     "managerDate"
-  ).value = date;
+  ).value =
+    date;
 
   document.getElementById(
     "dailyTitle"
@@ -1748,9 +1829,6 @@ async function loadDailyAttendance() {
     "読み込み中...";
 
   try {
-
-    const activeEmployees =
-      getActiveEmployees();
 
     const records =
       await supabaseRequest(
@@ -1768,170 +1846,197 @@ async function loadDailyAttendance() {
     const recordMap =
       new Map();
 
-    uniqueRecords.forEach(record => {
+    uniqueRecords.forEach(
+      record => {
 
-      recordMap.set(
-        String(record.employee_id),
-        record
-      );
+        recordMap.set(
+          String(record.employee_id),
+          record
+        );
 
-    });
+      }
+    );
+
+    const activeEmployees =
+      getActiveEmployees();
 
     if (!activeEmployees.length) {
 
       container.innerHTML =
-        `<div class="notice">
+        `
+        <div class="notice">
           現在、アクティブなスタッフがいません。
-        </div>`;
+        </div>
+        `;
 
       return;
+
     }
 
     container.innerHTML =
-      activeEmployees.map(employee => {
+      activeEmployees
+        .map(employee => {
 
-        const record =
-          recordMap.get(
-            String(employee.id)
-          );
+          const record =
+            recordMap.get(
+              String(employee.id)
+            );
 
-        let status =
-          `<span class="status-off">未出勤</span>`;
+          let status =
+            `<span class="status-off">
+              未出勤
+            </span>`;
 
-        let times = "";
+          let times = "";
+          let workTime = "";
 
-        let workTime = "";
+          if (record) {
 
-        if (record) {
+            if (
+              record.clock_in &&
+              !record.clock_out
+            ) {
 
-          if (
-            record.clock_in &&
-            !record.clock_out
-          ) {
+              status =
+                `<span class="status-working">
+                  🟢 出勤中
+                </span>`;
 
-            status =
-              `<span class="status-working">
-                🟢 出勤中
-              </span>`;
+              times =
+                `出勤：${formatTime(
+                  record.clock_in
+                )}`;
 
-            times =
-              `出勤：${formatTime(record.clock_in)}`;
+              workTime =
+                calculateCurrentWorkTime(
+                  record
+                );
 
-            workTime =
-              calculateCurrentWorkTime(
-                record
-              );
+            } else if (
+              record.clock_in &&
+              record.clock_out
+            ) {
 
-          } else if (
-            record.clock_in &&
-            record.clock_out
-          ) {
+              status =
+                `<span class="status-off">
+                  退勤済
+                </span>`;
 
-            status =
-              `<span class="status-off">
-                退勤済
-              </span>`;
+              times =
+                `出勤：${formatTime(
+                  record.clock_in
+                )}
+                ／
+                退勤：${formatTime(
+                  record.clock_out
+                )}`;
 
-            times =
-              `出勤：${formatTime(record.clock_in)}
-               ／
-               退勤：${formatTime(record.clock_out)}`;
+              workTime =
+                calculateWorkMinutes(
+                  record
+                );
 
-            workTime =
-              calculateWorkMinutes(
-                record
-              );
+            }
 
           }
 
-        }
+          return `
+            <div class="shift-row">
 
-        return `
-          <div class="shift-row">
-
-            <div class="row">
-
-              <div>
-                <strong>
-                  ${escapeHTML(employee.name)}
-                </strong>
+              <div class="row">
 
                 <div>
-                  ${status}
+
+                  <strong>
+                    ${escapeHTML(
+                      employee.name
+                    )}
+                  </strong>
+
+                  <div>
+                    ${status}
+                  </div>
+
+                  <div class="shift-details">
+                    ${times}
+                    ${
+                      workTime
+                        ? `<br>実働：${workTime}`
+                        : ""
+                    }
+                  </div>
+
                 </div>
 
-                <div class="shift-details">
-                  ${times}
-                  ${workTime
-                    ? `<br>実働：${workTime}`
-                    : ""}
+                <div class="action-buttons">
+
+                  ${
+                    record
+                      ? `
+                        <button
+                          class="blue"
+                          onclick="openEditAttendanceById('${record.id}')"
+                        >
+                          編集
+                        </button>
+
+                        <button
+                          class="red"
+                          onclick="deleteAttendance('${record.id}')"
+                        >
+                          🗑 削除
+                        </button>
+
+                        <button
+                          class="orange"
+                          onclick="resetAttendance('${record.id}')"
+                        >
+                          0時間にリセット
+                        </button>
+                      `
+                      : `
+                        <button
+                          class="gray"
+                          onclick="openNewAttendance(${employee.id})"
+                        >
+                          ＋ 勤務入力
+                        </button>
+                      `
+                  }
+
                 </div>
-              </div>
-
-              <div class="action-buttons">
-
-                ${
-                  record
-                    ? `
-                      <button
-                        class="blue"
-                        onclick="openEditAttendanceById('${record.id}')"
-                      >
-                        編集
-                      </button>
-
-                      <button
-                        class="red"
-                        onclick="deleteAttendance('${record.id}')"
-                      >
-                        🗑 削除
-                      </button>
-
-                      <button
-                        class="orange"
-                        onclick="resetAttendance('${record.id}')"
-                      >
-                        0時間にリセット
-                      </button>
-                    `
-                    : `
-                      <button
-                        class="gray"
-                        onclick="openNewAttendance(${employee.id})"
-                      >
-                        ＋ 勤務入力
-                      </button>
-                    `
-                }
 
               </div>
 
             </div>
+          `;
 
-          </div>
-        `;
-
-      }).join("");
+        })
+        .join("");
 
   } catch (error) {
 
     console.error(error);
 
     container.innerHTML =
-      `<div class="danger-notice">
+      `
+      <div class="danger-notice">
         勤務データを読み込めませんでした。
-      </div>`;
+      </div>
+      `;
 
   }
 
 }
 
 
-/* =========================================================
-   CURRENT WORK TIME
-========================================================= */
+/* =====================================================
+   WORK TIME
+===================================================== */
 
-function calculateCurrentWorkTime(record) {
+function calculateCurrentWorkTime(
+  record
+) {
 
   if (!record.clock_in) {
     return "";
@@ -1947,22 +2052,29 @@ function calculateCurrentWorkTime(record) {
 
   let minutes =
     Math.floor(
-      (end - start) / 60000
+      (end - start) /
+      60000
     );
 
   minutes -=
-    Number(record.break_minutes || 0);
+    Number(
+      record.break_minutes || 0
+    );
 
   if (minutes < 0) {
     minutes = 0;
   }
 
-  return formatMinutes(minutes);
+  return formatMinutes(
+    minutes
+  );
 
 }
 
 
-function calculateWorkMinutes(record) {
+function calculateWorkMinutes(
+  record
+) {
 
   if (
     !record.clock_in ||
@@ -1971,30 +2083,54 @@ function calculateWorkMinutes(record) {
     return "";
   }
 
+  return formatMinutes(
+    getWorkMinutes(record)
+  );
+
+}
+
+
+function getWorkMinutes(
+  record
+) {
+
+  if (
+    !record.clock_in ||
+    !record.clock_out
+  ) {
+    return 0;
+  }
+
   let minutes =
     Math.floor(
       (
         new Date(record.clock_out) -
         new Date(record.clock_in)
-      ) / 60000
+      ) /
+      60000
     );
 
   minutes -=
-    Number(record.break_minutes || 0);
+    Number(
+      record.break_minutes || 0
+    );
 
-  if (minutes < 0) {
-    minutes = 0;
-  }
-
-  return formatMinutes(minutes);
+  return Math.max(
+    0,
+    minutes
+  );
 
 }
 
 
-function formatMinutes(minutes) {
+function formatMinutes(
+  minutes
+) {
 
   const hours =
-    Math.floor(minutes / 60);
+    Math.floor(
+      minutes / 60
+    );
 
   const mins =
     minutes % 60;
@@ -2004,9 +2140,29 @@ function formatMinutes(minutes) {
 }
 
 
-/* =========================================================
-   OPEN NEW ATTENDANCE
-========================================================= */
+function formatTime(
+  iso
+) {
+
+  if (!iso) return "";
+
+  return new Intl.DateTimeFormat(
+    "ja-JP",
+    {
+      timeZone: "Asia/Tokyo",
+      hour: "2-digit",
+      minute: "2-digit"
+    }
+  ).format(
+    new Date(iso)
+  );
+
+}
+
+
+/* =====================================================
+   NEW / EDIT ATTENDANCE
+===================================================== */
 
 async function openNewAttendance(
   employeeId
@@ -2016,7 +2172,7 @@ async function openNewAttendance(
     managerSelectedDate ||
     getJapanDate();
 
-  const existingRecords =
+  const records =
     await getAttendanceForEmployeeDate(
       employeeId,
       date
@@ -2024,18 +2180,14 @@ async function openNewAttendance(
 
   const existing =
     choosePrimaryAttendanceRecord(
-      existingRecords
+      records
     );
-
-  /*
-    Critical:
-    If the day already has a record,
-    edit that record instead of creating another.
-  */
 
   if (existing) {
 
-    openEditAttendance(existing);
+    openEditAttendance(
+      existing
+    );
 
     return;
 
@@ -2052,7 +2204,8 @@ async function openNewAttendance(
 
   document.getElementById(
     "editAttendanceDate"
-  ).value = date;
+  ).value =
+    date;
 
   document.getElementById(
     "editClockIn"
@@ -2078,10 +2231,6 @@ async function openNewAttendance(
 }
 
 
-/* =========================================================
-   OPEN EDIT ATTENDANCE
-========================================================= */
-
 async function openEditAttendanceById(
   attendanceId
 ) {
@@ -2092,14 +2241,18 @@ async function openEditAttendanceById(
       await supabaseRequest(
         "attendance",
         "GET",
-        `?select=*&id=eq.${encodeURIComponent(attendanceId)}`
+        `?select=*&id=eq.${encodeURIComponent(
+          attendanceId
+        )}`
       );
 
     if (!records.length) {
 
       alert(
-        "勤務データが見つかりません。"
+        "この勤務データはすでに削除されています。"
       );
+
+      await loadStaffHistory();
 
       return;
 
@@ -2122,7 +2275,9 @@ async function openEditAttendanceById(
 }
 
 
-function openEditAttendance(record) {
+function openEditAttendance(
+  record
+) {
 
   document.getElementById(
     "editAttendanceId"
@@ -2170,10 +2325,6 @@ function openEditAttendance(record) {
 }
 
 
-/* =========================================================
-   SAVE ATTENDANCE EDIT
-========================================================= */
-
 async function saveEdit() {
 
   const id =
@@ -2208,7 +2359,10 @@ async function saveEdit() {
       ).value || 0
     );
 
-  if (!employeeId || !workDate) {
+  if (
+    !employeeId ||
+    !workDate
+  ) {
 
     alert(
       "スタッフと日付を入力してください。"
@@ -2218,7 +2372,9 @@ async function saveEdit() {
 
   }
 
-  if (breakMinutes < 0) {
+  if (
+    breakMinutes < 0
+  ) {
 
     alert(
       "休憩時間を正しく入力してください。"
@@ -2228,234 +2384,134 @@ async function saveEdit() {
 
   }
 
-  /*
-    If editing an existing record, update it.
-    If changing employee/date, check for another
-    record first so we still maintain one/day.
-  */
+  const body = {
 
-  if (id) {
+    employee_id:
+      Number(employeeId),
 
-    const duplicates =
-      await getAttendanceForEmployeeDate(
-        employeeId,
-        workDate
-      );
+    work_date:
+      workDate,
 
-    const otherRecord =
-      duplicates.find(
-        record =>
-          String(record.id) !== String(id)
-      );
+    clock_in:
+      localDateTimeToISO(clockIn),
 
-    if (otherRecord) {
+    clock_out:
+      localDateTimeToISO(clockOut),
 
-      const confirmMerge =
-        confirm(
-          "このスタッフのこの日には、すでに別の勤務データがあります。\n\n" +
-          "既存の勤務データを上書きして、このデータを削除しますか？"
-        );
+    break_minutes:
+      breakMinutes
 
-      if (!confirmMerge) {
-        return;
-      }
-
-      await supabaseRequest(
-        "attendance",
-        "PATCH",
-        `?id=eq.${otherRecord.id}`,
-        {
-          clock_in:
-            localDateTimeToISO(clockIn),
-
-          clock_out:
-            localDateTimeToISO(clockOut),
-
-          break_minutes:
-            breakMinutes
-        }
-      );
-
-      await supabaseRequest(
-        "attendance",
-        "DELETE",
-        `?id=eq.${id}`
-      );
-
-    } else {
-
-      await supabaseRequest(
-        "attendance",
-        "PATCH",
-        `?id=eq.${id}`,
-        {
-          employee_id:
-            Number(employeeId),
-
-          work_date:
-            workDate,
-
-          clock_in:
-            localDateTimeToISO(clockIn),
-
-          clock_out:
-            localDateTimeToISO(clockOut),
-
-          break_minutes:
-            breakMinutes
-        }
-      );
-
-    }
-
-  } else {
-
-    /*
-      New record:
-      ALWAYS check again before INSERT.
-    */
-
-    const existingRecords =
-      await getAttendanceForEmployeeDate(
-        employeeId,
-        workDate
-      );
-
-    const existing =
-      choosePrimaryAttendanceRecord(
-        existingRecords
-      );
-
-    if (existing) {
-
-      await supabaseRequest(
-        "attendance",
-        "PATCH",
-        `?id=eq.${existing.id}`,
-        {
-          clock_in:
-            localDateTimeToISO(clockIn),
-
-          clock_out:
-            localDateTimeToISO(clockOut),
-
-          break_minutes:
-            breakMinutes
-        }
-      );
-
-    } else {
-
-      await supabaseRequest(
-        "attendance",
-        "POST",
-        "",
-        {
-          employee_id:
-            Number(employeeId),
-
-          work_date:
-            workDate,
-
-          clock_in:
-            localDateTimeToISO(clockIn),
-
-          clock_out:
-            localDateTimeToISO(clockOut),
-
-          break_minutes:
-            breakMinutes
-        }
-      );
-
-    }
-
-  }
-
-  closeModal(
-    "editAttendanceModal"
-  );
-
-  await loadDailyAttendance();
-
-  if (
-    !document.getElementById(
-      "historyModal"
-    ).classList.contains("hidden")
-  ) {
-
-    await loadStaffHistory();
-
-  }
-
-  alert("保存しました。");
-
-}
-
-
-/* =========================================================
-   DELETE ATTENDANCE
-========================================================= */
-
-async function deleteAttendance(
-  attendanceId,
-  refreshHistory = false
-) {
-
-  const records =
-    await supabaseRequest(
-      "attendance",
-      "GET",
-      `?select=*&id=eq.${encodeURIComponent(attendanceId)}`
-    );
-
-  if (!records.length) {
-
-    alert(
-      "勤務データが見つかりません。"
-    );
-
-    return;
-
-  }
-
-  const record =
-    records[0];
-
-  const employee =
-    getEmployee(
-      record.employee_id
-    );
-
-  const employeeName =
-    employee
-      ? employee.name
-      : "スタッフ";
-
-  const message =
-    `${employeeName}さん\n` +
-    `${record.work_date} の勤務データを削除しますか？\n\n` +
-    `出勤：${formatTime(record.clock_in)}\n` +
-    `退勤：${formatTime(record.clock_out)}\n` +
-    `休憩：${record.break_minutes || 0}分\n\n` +
-    `⚠ この操作は元に戻せません。`;
-
-  const confirmed =
-    confirm(message);
-
-  if (!confirmed) {
-    return;
-  }
+  };
 
   try {
 
-    await supabaseRequest(
-      "attendance",
-      "DELETE",
-      `?id=eq.${encodeURIComponent(attendanceId)}`
-    );
+    if (id) {
 
-    alert("勤務データを削除しました。");
+      const existing =
+        await getAttendanceForEmployeeDate(
+          employeeId,
+          workDate
+        );
+
+      const duplicate =
+        existing.find(
+          record =>
+            String(record.id) !==
+            String(id)
+        );
+
+      if (duplicate) {
+
+        const confirmed =
+          confirm(
+            "このスタッフのこの日には、すでに別の勤務データがあります。\n\n" +
+            "既存データを上書きして、このデータを統合しますか？"
+          );
+
+        if (!confirmed) {
+          return;
+        }
+
+        await supabaseRequest(
+          "attendance",
+          "PATCH",
+          `?id=eq.${duplicate.id}`,
+          {
+            clock_in:
+              body.clock_in,
+
+            clock_out:
+              body.clock_out,
+
+            break_minutes:
+              body.break_minutes
+          }
+        );
+
+        await supabaseRequest(
+          "attendance",
+          "DELETE",
+          `?id=eq.${id}`
+        );
+
+      } else {
+
+        await supabaseRequest(
+          "attendance",
+          "PATCH",
+          `?id=eq.${id}`,
+          body
+        );
+
+      }
+
+    } else {
+
+      const existing =
+        await getAttendanceForEmployeeDate(
+          employeeId,
+          workDate
+        );
+
+      const primary =
+        choosePrimaryAttendanceRecord(
+          existing
+        );
+
+      if (primary) {
+
+        await supabaseRequest(
+          "attendance",
+          "PATCH",
+          `?id=eq.${primary.id}`,
+          {
+            clock_in:
+              body.clock_in,
+
+            clock_out:
+              body.clock_out,
+
+            break_minutes:
+              body.break_minutes
+          }
+        );
+
+      } else {
+
+        await supabaseRequest(
+          "attendance",
+          "POST",
+          "",
+          body
+        );
+
+      }
+
+    }
+
+    closeModal(
+      "editAttendanceModal"
+    );
 
     await loadDailyAttendance();
 
@@ -2469,13 +2525,15 @@ async function deleteAttendance(
 
     }
 
+    alert("保存しました。");
+
   } catch (error) {
 
     console.error(error);
 
     alert(
-      "削除できませんでした。\n\n" +
-      "SupabaseのDELETE権限（RLS）を確認してください。"
+      "保存できませんでした。\n\n" +
+      error.message
     );
 
   }
@@ -2483,9 +2541,205 @@ async function deleteAttendance(
 }
 
 
-/* =========================================================
-   RESET ATTENDANCE
-========================================================= */
+/* =====================================================
+   ★ FIXED DELETE
+===================================================== */
+
+async function deleteAttendance(
+  attendanceId,
+  fromHistory = false
+) {
+
+  try {
+
+    /*
+      First get the selected record.
+    */
+
+    const selectedRows =
+      await supabaseRequest(
+        "attendance",
+        "GET",
+        `?select=*&id=eq.${encodeURIComponent(
+          attendanceId
+        )}`
+      );
+
+    if (!selectedRows.length) {
+
+      alert(
+        "この勤務データはすでに削除されています。"
+      );
+
+      if (fromHistory) {
+        await loadStaffHistory();
+      } else {
+        await loadDailyAttendance();
+      }
+
+      return;
+
+    }
+
+    const selected =
+      selectedRows[0];
+
+    const employee =
+      getEmployee(
+        selected.employee_id
+      );
+
+    const employeeName =
+      employee
+        ? employee.name
+        : "スタッフ";
+
+
+    /*
+      Check if there are old duplicate records
+      for the same staff/date.
+    */
+
+    const sameDayRecords =
+      await getAttendanceForEmployeeDate(
+        selected.employee_id,
+        selected.work_date
+      );
+
+
+    const message =
+      sameDayRecords.length > 1
+
+        ? `${employeeName}さん\n` +
+          `${selected.work_date} の勤務データを削除しますか？\n\n` +
+          `この日は ${sameDayRecords.length}件の重複データがあります。\n` +
+          `🗑 削除すると、この日の勤務データをすべて削除します。\n\n` +
+          `この操作は元に戻せません。`
+
+        : `${employeeName}さん\n` +
+          `${selected.work_date} の勤務データを削除しますか？\n\n` +
+          `出勤：${
+            formatTime(selected.clock_in) ||
+            "未入力"
+          }\n` +
+          `退勤：${
+            formatTime(selected.clock_out) ||
+            "未入力"
+          }\n` +
+          `休憩：${
+            selected.break_minutes || 0
+          }分\n\n` +
+          `この操作は元に戻せません。`;
+
+
+    const confirmed =
+      confirm(message);
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    /*
+      ★ IMPORTANT:
+      Delete ALL records for that staff/date.
+
+      This also cleans up old duplicate records.
+    */
+
+    await supabaseRequest(
+      "attendance",
+      "DELETE",
+      `?employee_id=eq.${encodeURIComponent(
+        selected.employee_id
+      )}` +
+      `&work_date=eq.${encodeURIComponent(
+        selected.work_date
+      )}`
+    );
+
+
+    /*
+      ★ VERIFY THE DELETE
+      This is the important fix.
+
+      We ask Supabase again whether the records
+      still exist.
+    */
+
+    const remaining =
+      await getAttendanceForEmployeeDate(
+        selected.employee_id,
+        selected.work_date
+      );
+
+
+    if (remaining.length > 0) {
+
+      /*
+        DELETE did not actually remove the rows.
+      */
+
+      console.error(
+        "Delete verification failed:",
+        remaining
+      );
+
+      alert(
+        "⚠️ 勤務データを削除できませんでした。\n\n" +
+        "SupabaseのRLS（DELETE権限）が有効になっていない可能性があります。\n\n" +
+        "Supabase SQL Editorで、下記のDELETEポリシーを追加してください。"
+      );
+
+      return;
+
+    }
+
+
+    /*
+      ★ SUCCESS
+    */
+
+    alert(
+      `${selected.work_date} の勤務データを削除しました。`
+    );
+
+
+    /*
+      ★ RELOAD THE CURRENT PAGE
+      so the deleted record disappears immediately.
+    */
+
+    if (fromHistory) {
+
+      await loadStaffHistory();
+
+    } else {
+
+      await loadDailyAttendance();
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Delete error:",
+      error
+    );
+
+    alert(
+      "勤務データを削除できませんでした。\n\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   RESET
+===================================================== */
 
 async function resetAttendance(
   attendanceId
@@ -2517,9 +2771,38 @@ async function resetAttendance(
 }
 
 
-/* =========================================================
+async function resetAttendanceFromHistory(
+  attendanceId
+) {
+
+  const confirmed =
+    confirm(
+      "この日の勤務時間を0時間にリセットしますか？"
+    );
+
+  if (!confirmed) {
+    return;
+  }
+
+  await supabaseRequest(
+    "attendance",
+    "PATCH",
+    `?id=eq.${attendanceId}`,
+    {
+      clock_in: null,
+      clock_out: null,
+      break_minutes: 0
+    }
+  );
+
+  await loadStaffHistory();
+
+}
+
+
+/* =====================================================
    BULK ENTRY
-========================================================= */
+===================================================== */
 
 async function openBulkEntry() {
 
@@ -2527,30 +2810,33 @@ async function openBulkEntry() {
     managerSelectedDate ||
     getJapanDate();
 
-  const activeEmployees =
-    getActiveEmployees();
-
   const records =
     await supabaseRequest(
       "attendance",
       "GET",
-      `?select=*&work_date=eq.${encodeURIComponent(date)}`
+      `?select=*&work_date=eq.${encodeURIComponent(
+        date
+      )}`
     );
 
   const uniqueRecords =
-    dedupeAttendanceRecords(records);
+    dedupeAttendanceRecords(
+      records
+    );
 
   const recordMap =
     new Map();
 
-  uniqueRecords.forEach(record => {
+  uniqueRecords.forEach(
+    record => {
 
-    recordMap.set(
-      String(record.employee_id),
-      record
-    );
+      recordMap.set(
+        String(record.employee_id),
+        record
+      );
 
-  });
+    }
+  );
 
   document.getElementById(
     "bulkEntryDateLabel"
@@ -2563,62 +2849,83 @@ async function openBulkEntry() {
     );
 
   list.innerHTML =
-    activeEmployees.map(employee => {
+    getActiveEmployees()
+      .map(employee => {
 
-      const record =
-        recordMap.get(
-          String(employee.id)
-        );
+        const record =
+          recordMap.get(
+            String(employee.id)
+          );
 
-      return `
-        <div
-          class="shift-row"
-          data-bulk-employee="${employee.id}"
-          data-record-id="${record ? record.id : ""}"
-        >
+        return `
+          <div
+            class="shift-row"
+            data-bulk-employee="${employee.id}"
+            data-record-id="${
+              record
+                ? record.id
+                : ""
+            }"
+          >
 
-          <strong>
-            ${escapeHTML(employee.name)}
-          </strong>
+            <strong>
+              ${escapeHTML(
+                employee.name
+              )}
+            </strong>
 
-          <label>
-            出勤
-            <input
-              type="datetime-local"
-              class="bulk-clock-in"
-              value="${record
-                ? formatDateTimeForInput(record.clock_in)
-                : ""}"
-            >
-          </label>
+            <label>
+              出勤
+              <input
+                type="datetime-local"
+                class="bulk-clock-in"
+                value="${
+                  record
+                    ? formatDateTimeForInput(
+                        record.clock_in
+                      )
+                    : ""
+                }"
+              >
+            </label>
 
-          <label>
-            退勤
-            <input
-              type="datetime-local"
-              class="bulk-clock-out"
-              value="${record
-                ? formatDateTimeForInput(record.clock_out)
-                : ""}"
-            >
-          </label>
+            <label>
+              退勤
+              <input
+                type="datetime-local"
+                class="bulk-clock-out"
+                value="${
+                  record
+                    ? formatDateTimeForInput(
+                        record.clock_out
+                      )
+                    : ""
+                }"
+              >
+            </label>
 
-          <label>
-            休憩（分）
-            <input
-              type="number"
-              min="0"
-              class="bulk-break"
-              value="${record
-                ? (record.break_minutes || 0)
-                : 0}"
-            >
-          </label>
+            <label>
+              休憩（分）
+              <input
+                type="number"
+                min="0"
+                class="bulk-break"
+                value="${
+                  record
+                    ? (
+                        record.break_minutes ||
+                        0
+                      )
+                    : 0
+                }"
+              >
+            </label>
 
-        </div>
-      `;
+          </div>
+        `;
 
-    }).join("");
+      })
+      .join("");
 
   openModal(
     "bulkEntryModal"
@@ -2640,7 +2947,9 @@ async function saveBulkEntry() {
 
   try {
 
-    for (const row of rows) {
+    for (
+      const row of rows
+    ) {
 
       const employeeId =
         row.dataset.bulkEmployee;
@@ -2665,16 +2974,23 @@ async function saveBulkEntry() {
           ).value || 0
         );
 
-      /*
-        If all fields are blank, don't create
-        an empty attendance record.
-      */
-
-      if (!clockIn && !clockOut) {
-
+      if (
+        !clockIn &&
+        !clockOut
+      ) {
         continue;
-
       }
+
+      const existing =
+        await getAttendanceForEmployeeDate(
+          employeeId,
+          date
+        );
+
+      const primary =
+        choosePrimaryAttendanceRecord(
+          existing
+        );
 
       const body = {
 
@@ -2685,22 +3001,26 @@ async function saveBulkEntry() {
           date,
 
         clock_in:
-          localDateTimeToISO(clockIn),
+          localDateTimeToISO(
+            clockIn
+          ),
 
         clock_out:
-          localDateTimeToISO(clockOut),
+          localDateTimeToISO(
+            clockOut
+          ),
 
         break_minutes:
           breakMinutes
 
       };
 
-      if (recordId) {
+      if (primary) {
 
         await supabaseRequest(
           "attendance",
           "PATCH",
-          `?id=eq.${recordId}`,
+          `?id=eq.${primary.id}`,
           {
             clock_in:
               body.clock_in,
@@ -2715,50 +3035,12 @@ async function saveBulkEntry() {
 
       } else {
 
-        /*
-          Re-check DB before INSERT.
-          This prevents duplicates.
-        */
-
-        const existingRecords =
-          await getAttendanceForEmployeeDate(
-            employeeId,
-            date
-          );
-
-        const existing =
-          choosePrimaryAttendanceRecord(
-            existingRecords
-          );
-
-        if (existing) {
-
-          await supabaseRequest(
-            "attendance",
-            "PATCH",
-            `?id=eq.${existing.id}`,
-            {
-              clock_in:
-                body.clock_in,
-
-              clock_out:
-                body.clock_out,
-
-              break_minutes:
-                body.break_minutes
-            }
-          );
-
-        } else {
-
-          await supabaseRequest(
-            "attendance",
-            "POST",
-            "",
-            body
-          );
-
-        }
+        await supabaseRequest(
+          "attendance",
+          "POST",
+          "",
+          body
+        );
 
       }
 
@@ -2770,7 +3052,9 @@ async function saveBulkEntry() {
 
     await loadDailyAttendance();
 
-    alert("一括保存しました。");
+    alert(
+      "一括保存しました。"
+    );
 
   } catch (error) {
 
@@ -2785,9 +3069,9 @@ async function saveBulkEntry() {
 }
 
 
-/* =========================================================
+/* =====================================================
    STAFF MANAGEMENT
-========================================================= */
+===================================================== */
 
 async function addStaff() {
 
@@ -2827,7 +3111,9 @@ async function addStaff() {
     if (existing.length) {
 
       const code =
-        existing[0].employee_code || "";
+        existing[0]
+          .employee_code ||
+        "";
 
       const match =
         code.match(
@@ -2845,7 +3131,8 @@ async function addStaff() {
 
     const employeeCode =
       "EMP" +
-      String(nextNumber).padStart(3, "0");
+      String(nextNumber)
+        .padStart(3,"0");
 
     await supabaseRequest(
       "employees",
@@ -2874,7 +3161,9 @@ async function addStaff() {
 
     await loadStaffManagement();
 
-    alert("スタッフを追加しました。");
+    alert(
+      "スタッフを追加しました。"
+    );
 
   } catch (error) {
 
@@ -2898,104 +3187,121 @@ async function loadStaffManagement() {
     );
 
   const sorted =
-    [...employees].sort((a,b) => {
+    [...employees].sort(
+      (a,b) => {
 
-      if (
-        a.active !== b.active
-      ) {
-        return a.active
-          ? -1
-          : 1;
+        if (
+          a.active !==
+          b.active
+        ) {
+
+          return a.active
+            ? -1
+            : 1;
+
+        }
+
+        return String(a.name)
+          .localeCompare(
+            String(b.name),
+            "ja"
+          );
+
       }
-
-      return String(a.name)
-        .localeCompare(
-          String(b.name),
-          "ja"
-        );
-
-    });
+    );
 
   container.innerHTML =
-    sorted.map(employee => {
+    sorted
+      .map(employee => {
 
-      return `
-        <div class="shift-row">
+        return `
+          <div class="shift-row">
 
-          <div class="row">
+            <div class="row">
 
-            <div>
+              <div>
 
-              <strong>
-                ${escapeHTML(employee.name)}
-              </strong>
+                <strong>
+                  ${escapeHTML(
+                    employee.name
+                  )}
+                </strong>
 
-              <div class="small">
-                時給：¥${Number(
-                  employee.hourly_rate || 0
-                ).toLocaleString()}
+                <div class="small">
+                  時給：
+                  ¥${Number(
+                    employee.hourly_rate ||
+                    0
+                  ).toLocaleString()}
+                </div>
+
+                <div class="small">
+                  ${
+                    employee.active
+                      ? "🟢 在籍"
+                      : "⚪ 無効"
+                  }
+                </div>
+
               </div>
 
-              <div class="small">
-                ${employee.active
-                  ? "🟢 在籍"
-                  : "⚪ 無効"}
+              <div class="action-buttons">
+
+                <button
+                  class="blue"
+                  onclick="openStaffEdit(${employee.id})"
+                >
+                  編集
+                </button>
+
+                <button
+                  class="gray"
+                  onclick="openStaffHistory(${employee.id})"
+                >
+                  📅 勤務履歴
+                </button>
+
+                ${
+                  employee.active
+                    ? `
+                      <button
+                        class="orange"
+                        onclick="deactivateStaff(${employee.id})"
+                      >
+                        無効化
+                      </button>
+                    `
+                    : `
+                      <button
+                        class="green"
+                        onclick="activateStaff(${employee.id})"
+                      >
+                        再有効化
+                      </button>
+                    `
+                }
+
               </div>
-
-            </div>
-
-            <div class="action-buttons">
-
-              <button
-                class="blue"
-                onclick="openStaffEdit(${employee.id})"
-              >
-                編集
-              </button>
-
-              <button
-                class="gray"
-                onclick="openStaffHistory(${employee.id})"
-              >
-                📅 勤務履歴
-              </button>
-
-              ${
-                employee.active
-                ? `
-                  <button
-                    class="orange"
-                    onclick="deactivateStaff(${employee.id})"
-                  >
-                    無効化
-                  </button>
-                `
-                : `
-                  <button
-                    class="green"
-                    onclick="activateStaff(${employee.id})"
-                  >
-                    再有効化
-                  </button>
-                `
-              }
 
             </div>
 
           </div>
+        `;
 
-        </div>
-      `;
-
-    }).join("");
+      })
+      .join("");
 
 }
 
 
-function openStaffEdit(employeeId) {
+function openStaffEdit(
+  employeeId
+) {
 
   const employee =
-    getEmployee(employeeId);
+    getEmployee(
+      employeeId
+    );
 
   if (!employee) return;
 
@@ -3069,15 +3375,21 @@ async function saveStaffEdit() {
 
   await loadStaffManagement();
 
-  alert("スタッフ情報を更新しました。");
+  alert(
+    "スタッフ情報を更新しました。"
+  );
 
 }
 
 
-async function deactivateStaff(employeeId) {
+async function deactivateStaff(
+  employeeId
+) {
 
   const employee =
-    getEmployee(employeeId);
+    getEmployee(
+      employeeId
+    );
 
   if (!employee) return;
 
@@ -3105,12 +3417,9 @@ async function deactivateStaff(employeeId) {
 }
 
 
-async function activateStaff(employeeId) {
-
-  const employee =
-    getEmployee(employeeId);
-
-  if (!employee) return;
+async function activateStaff(
+  employeeId
+) {
 
   await supabaseRequest(
     "employees",
@@ -3128,21 +3437,20 @@ async function activateStaff(employeeId) {
 }
 
 
-/* =========================================================
+/* =====================================================
    STAFF HISTORY
-========================================================= */
+===================================================== */
 
 async function openStaffHistory(
   employeeId
 ) {
 
   const employee =
-    getEmployee(employeeId);
+    getEmployee(
+      employeeId
+    );
 
   if (!employee) return;
-
-  currentHistoryEmployee =
-    employee;
 
   document.getElementById(
     "historyEmployeeId"
@@ -3176,8 +3484,10 @@ function changeHistoryMonth(
 ) {
 
   if (!historyMonth) {
+
     historyMonth =
       getJapanMonth();
+
   }
 
   const parts =
@@ -3218,6 +3528,10 @@ function changeHistoryMonth(
 }
 
 
+/* =====================================================
+   LOAD HISTORY
+===================================================== */
+
 async function loadStaffHistory() {
 
   const employeeId =
@@ -3252,16 +3566,21 @@ async function loadStaffHistory() {
       await supabaseRequest(
         "attendance",
         "GET",
-        `?select=*&employee_id=eq.${encodeURIComponent(employeeId)}` +
-        `&work_date=gte.${encodeURIComponent(startDate)}` +
-        `&work_date=lt.${encodeURIComponent(endDate)}` +
+        `?select=*&employee_id=eq.${encodeURIComponent(
+          employeeId
+        )}` +
+        `&work_date=gte.${encodeURIComponent(
+          startDate
+        )}` +
+        `&work_date=lt.${encodeURIComponent(
+          endDate
+        )}` +
         `&order=work_date.desc,clock_in.desc`
       );
 
     /*
-      VERY IMPORTANT:
-      Even if old duplicate records exist,
-      only ONE record per date is displayed.
+      Existing duplicates are reduced to
+      ONE record per day.
     */
 
     const uniqueRecords =
@@ -3282,39 +3601,46 @@ async function loadStaffHistory() {
     let incompleteDays = 0;
     let totalPay = 0;
 
-    uniqueRecords.forEach(record => {
+    const employee =
+      getEmployee(
+        employeeId
+      );
 
-      if (
-        record.clock_in &&
-        record.clock_out
-      ) {
+    const hourlyRate =
+      Number(
+        employee?.hourly_rate || 0
+      );
 
-        const minutes =
-          getWorkMinutes(record);
+    uniqueRecords.forEach(
+      record => {
 
-        totalMinutes += minutes;
+        if (
+          record.clock_in &&
+          record.clock_out
+        ) {
 
-        completedDays++;
+          const minutes =
+            getWorkMinutes(
+              record
+            );
 
-        const employee =
-          getEmployee(employeeId);
+          totalMinutes +=
+            minutes;
 
-        const hourlyRate =
-          Number(
-            employee?.hourly_rate || 0
-          );
+          completedDays++;
 
-        totalPay +=
-          (minutes / 60) *
-          hourlyRate;
+          totalPay +=
+            (minutes / 60) *
+            hourlyRate;
 
-      } else {
+        } else {
 
-        incompleteDays++;
+          incompleteDays++;
+
+        }
 
       }
-
-    });
+    );
 
     document.getElementById(
       "historySummary"
@@ -3326,6 +3652,7 @@ async function loadStaffHistory() {
           <div class="summary-label">
             完了勤務日数
           </div>
+
           <div class="summary-value">
             ${completedDays}日
           </div>
@@ -3335,8 +3662,11 @@ async function loadStaffHistory() {
           <div class="summary-label">
             実働時間
           </div>
+
           <div class="summary-value">
-            ${formatMinutes(totalMinutes)}
+            ${formatMinutes(
+              totalMinutes
+            )}
           </div>
         </div>
 
@@ -3344,8 +3674,11 @@ async function loadStaffHistory() {
           <div class="summary-label">
             概算給与
           </div>
+
           <div class="summary-value">
-            ¥${Math.round(totalPay).toLocaleString()}
+            ¥${Math.round(
+              totalPay
+            ).toLocaleString()}
           </div>
         </div>
 
@@ -3353,6 +3686,7 @@ async function loadStaffHistory() {
           <div class="summary-label">
             未完了
           </div>
+
           <div class="summary-value">
             ${incompleteDays}日
           </div>
@@ -3372,174 +3706,164 @@ async function loadStaffHistory() {
 
     `;
 
-    if (!uniqueRecords.length) {
+    if (
+      !uniqueRecords.length
+    ) {
 
       container.innerHTML =
-        `<div class="notice">
+        `
+        <div class="notice">
           この月の勤務データはありません。
-        </div>`;
+        </div>
+        `;
 
       return;
 
     }
 
-    const employee =
-      getEmployee(employeeId);
 
-    const hourlyRate =
-      Number(
-        employee?.hourly_rate || 0
-      );
+    /*
+      ★ IMPORTANT:
+      Each date has exactly one displayed card.
+    */
 
     container.innerHTML =
-      uniqueRecords.map(record => {
+      uniqueRecords
+        .map(record => {
 
-        const completed =
-          record.clock_in &&
-          record.clock_out;
+          const completed =
+            record.clock_in &&
+            record.clock_out;
 
-        const minutes =
-          completed
-            ? getWorkMinutes(record)
-            : 0;
+          const minutes =
+            completed
+              ? getWorkMinutes(record)
+              : 0;
 
-        const pay =
-          completed
-            ? (minutes / 60) *
-              hourlyRate
-            : 0;
+          const pay =
+            completed
+              ? (
+                  minutes / 60
+                ) *
+                hourlyRate
+              : 0;
 
-        return `
+          return `
 
-          <div class="shift-row">
+            <div class="shift-row">
 
-            <div class="shift-date">
-              ${record.work_date}
+              <div class="shift-date">
+                📅 ${record.work_date}
+              </div>
+
+              <div class="shift-details">
+
+                ${
+                  record.clock_in
+                    ? `出勤：
+                       ${formatTime(
+                         record.clock_in
+                       )}`
+                    : "出勤：未入力"
+                }
+
+                <br>
+
+                ${
+                  record.clock_out
+                    ? `退勤：
+                       ${formatTime(
+                         record.clock_out
+                       )}`
+                    : "退勤：未入力"
+                }
+
+                <br>
+
+                休憩：
+                ${record.break_minutes || 0}分
+
+                <br>
+
+                ${
+                  completed
+                    ? `
+                      実働：
+                      ${formatMinutes(
+                        minutes
+                      )}
+
+                      <br>
+
+                      概算給与：
+                      ¥${Math.round(
+                        pay
+                      ).toLocaleString()}
+                    `
+                    : `
+                      <span class="status-working">
+                        ⚠ 未完了
+                      </span>
+                    `
+                }
+
+              </div>
+
+
+              <div
+                class="action-buttons"
+                style="margin-top:12px;"
+              >
+
+                <button
+                  class="blue"
+                  onclick="openEditAttendanceById('${record.id}')"
+                >
+                  ✏️ 編集
+                </button>
+
+                <button
+                  class="red"
+                  onclick="deleteAttendance('${record.id}', true)"
+                >
+                  🗑 削除
+                </button>
+
+                <button
+                  class="orange"
+                  onclick="resetAttendanceFromHistory('${record.id}')"
+                >
+                  0時間にリセット
+                </button>
+
+              </div>
+
             </div>
 
-            <div class="shift-details">
+          `;
 
-              ${
-                record.clock_in
-                  ? `出勤：
-                     ${formatTime(record.clock_in)}`
-                  : "出勤：未入力"
-              }
-
-              <br>
-
-              ${
-                record.clock_out
-                  ? `退勤：
-                     ${formatTime(record.clock_out)}`
-                  : "退勤：未入力"
-              }
-
-              <br>
-
-              休憩：
-              ${record.break_minutes || 0}分
-
-              <br>
-
-              ${
-                completed
-                  ? `実働：
-                     ${formatMinutes(minutes)}
-                     <br>
-                     概算給与：
-                     ¥${Math.round(pay).toLocaleString()}`
-                  : `
-                    <span class="status-working">
-                      ⚠ 未完了
-                    </span>
-                  `
-              }
-
-            </div>
-
-            <div class="action-buttons"
-                 style="margin-top:12px;">
-
-              <!-- THIS IS THE EDIT BUTTON -->
-              <button
-                class="blue"
-                onclick="openEditAttendanceById('${record.id}')"
-              >
-                ✏️ 編集
-              </button>
-
-              <!-- THIS IS THE NEW DELETE BUTTON -->
-              <button
-                class="red"
-                onclick="deleteAttendance('${record.id}', true)"
-              >
-                🗑 削除
-              </button>
-
-              <button
-                class="orange"
-                onclick="resetAttendanceFromHistory('${record.id}')"
-              >
-                0時間にリセット
-              </button>
-
-            </div>
-
-          </div>
-
-        `;
-
-      }).join("");
+        })
+        .join("");
 
   } catch (error) {
 
     console.error(error);
 
     container.innerHTML =
-      `<div class="danger-notice">
+      `
+      <div class="danger-notice">
         勤務履歴を読み込めませんでした。
-      </div>`;
+      </div>
+      `;
 
   }
 
 }
 
 
-/* =========================================================
-   HISTORY RESET
-========================================================= */
-
-async function resetAttendanceFromHistory(
-  attendanceId
-) {
-
-  const confirmed =
-    confirm(
-      "この日の勤務時間を0時間にリセットしますか？"
-    );
-
-  if (!confirmed) return;
-
-  await supabaseRequest(
-    "attendance",
-    "PATCH",
-    `?id=eq.${attendanceId}`,
-    {
-      clock_in: null,
-      clock_out: null,
-      break_minutes: 0
-    }
-  );
-
-  await loadStaffHistory();
-
-}
-
-
-/* =========================================================
+/* =====================================================
    PAYROLL
-========================================================= */
+===================================================== */
 
 async function loadPayroll() {
 
@@ -3560,8 +3884,12 @@ async function loadPayroll() {
     await supabaseRequest(
       "attendance",
       "GET",
-      `?select=*&work_date=gte.${encodeURIComponent(startDate)}` +
-      `&work_date=lt.${encodeURIComponent(endDate)}`
+      `?select=*&work_date=gte.${encodeURIComponent(
+        startDate
+      )}` +
+      `&work_date=lt.${encodeURIComponent(
+        endDate
+      )}`
     );
 
   const uniqueRecords =
@@ -3570,74 +3898,76 @@ async function loadPayroll() {
     );
 
   const rows =
-    employees.map(employee => {
+    employees.map(
+      employee => {
 
-      const employeeRecords =
-        uniqueRecords.filter(
-          record =>
-            String(record.employee_id) ===
-            String(employee.id)
+        const employeeRecords =
+          uniqueRecords.filter(
+            record =>
+              String(
+                record.employee_id
+              ) ===
+              String(employee.id)
+          );
+
+        let completedDays = 0;
+        let incompleteDays = 0;
+        let totalMinutes = 0;
+
+        employeeRecords.forEach(
+          record => {
+
+            if (
+              record.clock_in &&
+              record.clock_out
+            ) {
+
+              completedDays++;
+
+              totalMinutes +=
+                getWorkMinutes(
+                  record
+                );
+
+            } else {
+
+              incompleteDays++;
+
+            }
+
+          }
         );
 
-      let completedDays = 0;
-      let incompleteDays = 0;
-      let totalMinutes = 0;
+        const hourlyRate =
+          Number(
+            employee.hourly_rate ||
+            0
+          );
 
-      employeeRecords.forEach(record => {
+        const salary =
+          (totalMinutes / 60) *
+          hourlyRate;
 
-        if (
-          record.clock_in &&
-          record.clock_out
-        ) {
+        return {
+          employee,
+          completedDays,
+          incompleteDays,
+          totalMinutes,
+          hourlyRate,
+          salary
+        };
 
-          completedDays++;
-
-          totalMinutes +=
-            getWorkMinutes(record);
-
-        } else {
-
-          incompleteDays++;
-
-        }
-
-      });
-
-      const hourlyRate =
-        Number(
-          employee.hourly_rate || 0
-        );
-
-      const salary =
-        (totalMinutes / 60) *
-        hourlyRate;
-
-      return {
-
-        employee,
-
-        completedDays,
-
-        incompleteDays,
-
-        totalMinutes,
-
-        hourlyRate,
-
-        salary
-
-      };
-
-    });
+      }
+    );
 
   let totalPayroll = 0;
 
-  rows.forEach(row => {
-
-    totalPayroll +=
-      row.salary;
-
-  });
+  rows.forEach(
+    row => {
+      totalPayroll +=
+        row.salary;
+    }
+  );
 
   document.getElementById(
     "payrollSummary"
@@ -3646,38 +3976,51 @@ async function loadPayroll() {
     <div class="summary-grid">
 
       <div class="summary-box">
+
         <div class="summary-label">
           対象月
         </div>
+
         <div class="summary-value">
           ${month}
         </div>
+
       </div>
 
       <div class="summary-box">
+
         <div class="summary-label">
           スタッフ数
         </div>
+
         <div class="summary-value">
           ${employees.length}人
         </div>
+
       </div>
 
       <div class="summary-box">
+
         <div class="summary-label">
           概算給与合計
         </div>
+
         <div class="summary-value">
-          ¥${Math.round(totalPayroll).toLocaleString()}
+          ¥${Math.round(
+            totalPayroll
+          ).toLocaleString()}
         </div>
+
       </div>
 
     </div>
 
     <div class="notice"
          style="margin-top:12px;">
-      ※ 未完了勤務は給与計算から除外しています。
+
+      ※ 未完了勤務は給与計算から除外しています。<br>
       ※ 同じスタッフ・同じ日の重複データは1件として計算します。
+
     </div>
 
   `;
@@ -3685,61 +4028,68 @@ async function loadPayroll() {
   document.getElementById(
     "payrollTable"
   ).innerHTML =
-    rows.map(row => {
+    rows.map(
+      row => {
 
-      return `
+        return `
+          <tr>
 
-        <tr>
+            <td>
+              ${escapeHTML(
+                row.employee.name
+              )}
 
-          <td>
-            ${escapeHTML(row.employee.name)}
-            ${
-              row.employee.active
-                ? ""
-                : "<br><span class='small'>無効</span>"
-            }
-          </td>
+              ${
+                row.employee.active
+                  ? ""
+                  : "<br><span class='small'>無効</span>"
+              }
+            </td>
 
-          <td>
-            ${row.completedDays}日
-          </td>
+            <td>
+              ${row.completedDays}日
+            </td>
 
-          <td>
-            ${formatMinutes(row.totalMinutes)}
-          </td>
+            <td>
+              ${formatMinutes(
+                row.totalMinutes
+              )}
+            </td>
 
-          <td>
-            ¥${row.hourlyRate.toLocaleString()}
-          </td>
+            <td>
+              ¥${row.hourlyRate.toLocaleString()}
+            </td>
 
-          <td>
-            ¥${Math.round(
-              row.salary
-            ).toLocaleString()}
-          </td>
+            <td>
+              ¥${Math.round(
+                row.salary
+              ).toLocaleString()}
+            </td>
 
-          <td>
-            ${
-              row.incompleteDays
-                ? `<span class="status-working">
-                    ${row.incompleteDays}日
-                   </span>`
-                : "0日"
-            }
-          </td>
+            <td>
+              ${
+                row.incompleteDays
+                  ? `
+                    <span class="status-working">
+                      ${row.incompleteDays}日
+                    </span>
+                  `
+                  : "0日"
+              }
+            </td>
 
-        </tr>
+          </tr>
+        `;
 
-      `;
-
-    }).join("");
+      }
+    ).join("");
 
 }
 
 
-/* =========================================================
-   DAILY CSV
-========================================================= */
+/* =====================================================
+   STAFF CSV
+===================================================== */
 
 async function exportDailyCSV() {
 
@@ -3751,7 +4101,9 @@ async function exportDailyCSV() {
     await supabaseRequest(
       "attendance",
       "GET",
-      `?select=*&work_date=eq.${encodeURIComponent(date)}`
+      `?select=*&work_date=eq.${encodeURIComponent(
+        date
+      )}`
     );
 
   const uniqueRecords =
@@ -3772,44 +4124,50 @@ async function exportDailyCSV() {
     ]
   ];
 
-  uniqueRecords.forEach(record => {
+  uniqueRecords.forEach(
+    record => {
 
-    const employee =
-      getEmployee(
-        record.employee_id
-      );
+      const employee =
+        getEmployee(
+          record.employee_id
+        );
 
-    if (!employee) return;
+      if (!employee) return;
 
-    const minutes =
-      record.clock_in &&
-      record.clock_out
-        ? getWorkMinutes(record)
-        : 0;
+      const minutes =
+        record.clock_in &&
+        record.clock_out
+          ? getWorkMinutes(record)
+          : 0;
 
-    const salary =
-      record.clock_in &&
-      record.clock_out
-        ? (minutes / 60) *
-          Number(employee.hourly_rate || 0)
-        : 0;
+      const salary =
+        record.clock_in &&
+        record.clock_out
+          ? (
+              minutes / 60
+            ) *
+            Number(
+              employee.hourly_rate || 0
+            )
+          : 0;
 
-    rows.push([
-      record.work_date,
-      employee.name,
-      record.clock_in
-        ? formatTime(record.clock_in)
-        : "",
-      record.clock_out
-        ? formatTime(record.clock_out)
-        : "",
-      record.break_minutes || 0,
-      formatMinutes(minutes),
-      employee.hourly_rate || 0,
-      Math.round(salary)
-    ]);
+      rows.push([
+        record.work_date,
+        employee.name,
+        record.clock_in
+          ? formatTime(record.clock_in)
+          : "",
+        record.clock_out
+          ? formatTime(record.clock_out)
+          : "",
+        record.break_minutes || 0,
+        formatMinutes(minutes),
+        employee.hourly_rate || 0,
+        Math.round(salary)
+      ]);
 
-  });
+    }
+  );
 
   downloadCSV(
     rows,
@@ -3818,10 +4176,6 @@ async function exportDailyCSV() {
 
 }
 
-
-/* =========================================================
-   MONTHLY CSV
-========================================================= */
 
 async function exportMonthlyCSV() {
 
@@ -3842,8 +4196,12 @@ async function exportMonthlyCSV() {
     await supabaseRequest(
       "attendance",
       "GET",
-      `?select=*&work_date=gte.${encodeURIComponent(startDate)}` +
-      `&work_date=lt.${encodeURIComponent(endDate)}`
+      `?select=*&work_date=gte.${encodeURIComponent(
+        startDate
+      )}` +
+      `&work_date=lt.${encodeURIComponent(
+        endDate
+      )}`
     );
 
   const uniqueRecords =
@@ -3862,58 +4220,64 @@ async function exportMonthlyCSV() {
     ]
   ];
 
-  employees.forEach(employee => {
+  employees.forEach(
+    employee => {
 
-    const employeeRecords =
-      uniqueRecords.filter(
-        record =>
-          String(record.employee_id) ===
-          String(employee.id)
+      const employeeRecords =
+        uniqueRecords.filter(
+          record =>
+            String(
+              record.employee_id
+            ) ===
+            String(employee.id)
+        );
+
+      let days = 0;
+      let incomplete = 0;
+      let minutes = 0;
+
+      employeeRecords.forEach(
+        record => {
+
+          if (
+            record.clock_in &&
+            record.clock_out
+          ) {
+
+            days++;
+
+            minutes +=
+              getWorkMinutes(record);
+
+          } else {
+
+            incomplete++;
+
+          }
+
+        }
       );
 
-    let days = 0;
-    let incomplete = 0;
-    let minutes = 0;
+      const hourlyRate =
+        Number(
+          employee.hourly_rate || 0
+        );
 
-    employeeRecords.forEach(record => {
+      const salary =
+        (minutes / 60) *
+        hourlyRate;
 
-      if (
-        record.clock_in &&
-        record.clock_out
-      ) {
+      rows.push([
+        employee.name,
+        days,
+        formatMinutes(minutes),
+        hourlyRate,
+        Math.round(salary),
+        incomplete
+      ]);
 
-        days++;
-
-        minutes +=
-          getWorkMinutes(record);
-
-      } else {
-
-        incomplete++;
-
-      }
-
-    });
-
-    const hourlyRate =
-      Number(
-        employee.hourly_rate || 0
-      );
-
-    const salary =
-      (minutes / 60) *
-      hourlyRate;
-
-    rows.push([
-      employee.name,
-      days,
-      formatMinutes(minutes),
-      hourlyRate,
-      Math.round(salary),
-      incomplete
-    ]);
-
-  });
+    }
+  );
 
   downloadCSV(
     rows,
@@ -3923,25 +4287,24 @@ async function exportMonthlyCSV() {
 }
 
 
-/* =========================================================
-   CSV HELPER
-========================================================= */
-
 function downloadCSV(
   rows,
   filename
 ) {
 
   const csv =
-    rows
-      .map(row =>
-        row.map(value =>
-          `"${String(
-            value ?? ""
-          ).replace(/"/g, '""')}"`
+    rows.map(
+      row =>
+        row.map(
+          value =>
+            `"${String(
+              value ?? ""
+            ).replace(
+              /"/g,
+              '""'
+            )}"`
         ).join(",")
-      )
-      .join("\r\n");
+    ).join("\r\n");
 
   const blob =
     new Blob(
@@ -3972,9 +4335,9 @@ function downloadCSV(
 }
 
 
-/* =========================================================
+/* =====================================================
    PIN
-========================================================= */
+===================================================== */
 
 function changeManagerPin() {
 
@@ -3983,7 +4346,9 @@ function changeManagerPin() {
       "newManagerPin"
     ).value.trim();
 
-  if (!/^\d{4,8}$/.test(newPin)) {
+  if (
+    !/^\d{4,8}$/.test(newPin)
+  ) {
 
     alert(
       "PINは4〜8桁の数字で入力してください。"
@@ -4002,14 +4367,16 @@ function changeManagerPin() {
     "newManagerPin"
   ).value = "";
 
-  alert("管理者PINを変更しました。");
+  alert(
+    "管理者PINを変更しました。"
+  );
 
 }
 
 
-/* =========================================================
+/* =====================================================
    EMPLOYEE SELECT
-========================================================= */
+===================================================== */
 
 function populateEmployeeSelect(
   elementId,
@@ -4022,91 +4389,50 @@ function populateEmployeeSelect(
     );
 
   select.innerHTML =
-    employees.map(employee => {
+    employees
+      .map(employee => {
 
-      return `
-        <option
-          value="${employee.id}"
-          ${
-            String(employee.id) ===
-            String(selectedId)
-              ? "selected"
-              : ""
-          }
-        >
-          ${escapeHTML(employee.name)}
-          ${
-            employee.active
-              ? ""
-              : "（無効）"
-          }
-        </option>
-      `;
+        return `
+          <option
+            value="${employee.id}"
+            ${
+              String(employee.id) ===
+              String(selectedId)
+                ? "selected"
+                : ""
+            }
+          >
+            ${escapeHTML(
+              employee.name
+            )}
+            ${
+              employee.active
+                ? ""
+                : "（無効）"
+            }
+          </option>
+        `;
 
-    }).join("");
-
-}
-
-
-/* =========================================================
-   UTILITY
-========================================================= */
-
-function getWorkMinutes(record) {
-
-  if (
-    !record.clock_in ||
-    !record.clock_out
-  ) {
-    return 0;
-  }
-
-  let minutes =
-    Math.floor(
-      (
-        new Date(record.clock_out) -
-        new Date(record.clock_in)
-      ) / 60000
-    );
-
-  minutes -=
-    Number(
-      record.break_minutes || 0
-    );
-
-  return Math.max(
-    0,
-    minutes
-  );
+      })
+      .join("");
 
 }
 
 
-function formatTime(iso) {
+/* =====================================================
+   STAFF MANAGEMENT
+===================================================== */
 
-  if (!iso) return "";
-
-  return new Intl.DateTimeFormat(
-    "ja-JP",
-    {
-      timeZone: "Asia/Tokyo",
-      hour: "2-digit",
-      minute: "2-digit"
-    }
-  ).format(
-    new Date(iso)
-  );
-
-}
-
-
-function getNextMonth(month) {
+function getNextMonth(
+  month
+) {
 
   const [
     year,
     monthNumber
   ] =
-    month.split("-").map(Number);
+    month.split("-")
+      .map(Number);
 
   let nextYear =
     year;
@@ -4114,37 +4440,29 @@ function getNextMonth(month) {
   let nextMonth =
     monthNumber + 1;
 
-  if (nextMonth > 12) {
+  if (
+    nextMonth > 12
+  ) {
 
     nextMonth = 1;
     nextYear++;
 
   }
 
-  return `${nextYear}-${String(nextMonth).padStart(2,"0")}`;
+  return `${nextYear}-${String(
+    nextMonth
+  ).padStart(2,"0")}`;
 
 }
 
 
-function escapeHTML(value) {
-
-  return String(
-    value ?? ""
-  )
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
-}
-
-
-/* =========================================================
+/* =====================================================
    MODALS
-========================================================= */
+===================================================== */
 
-function openModal(id) {
+function openModal(
+  id
+) {
 
   document.getElementById(
     id
@@ -4155,7 +4473,9 @@ function openModal(id) {
 }
 
 
-function closeModal(id) {
+function closeModal(
+  id
+) {
 
   document.getElementById(
     id
@@ -4166,33 +4486,70 @@ function closeModal(id) {
 }
 
 
-/* =========================================================
-   CLICK OUTSIDE MODAL
-========================================================= */
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(
+  value
+) {
+
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+/* =====================================================
+   CLOSE MODAL BY OUTSIDE CLICK
+===================================================== */
 
 document.querySelectorAll(
   ".modal"
-).forEach(modal => {
+).forEach(
+  modal => {
 
-  modal.addEventListener(
-    "click",
-    event => {
+    modal.addEventListener(
+      "click",
+      event => {
 
-      if (
-        event.target === modal
-      ) {
+        if (
+          event.target ===
+          modal
+        ) {
 
-        modal.classList.add(
-          "hidden"
-        );
+          modal.classList.add(
+            "hidden"
+          );
+
+        }
 
       }
+    );
 
-    }
-  );
-
-});
-
+  }
+);
 
 </script>
 
