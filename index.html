@@ -315,6 +315,22 @@ label {
 .bulk-grid input {
   margin-top: 4px;
 }
+.reset-button {
+  width: 100%;
+  margin: 12px 0 0 0;
+}
+.pin-card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 15px;
+  background: #fafafa;
+}
+.pin-note {
+  color: #777;
+  font-size: 13px;
+  line-height: 1.5;
+}
 .modal {
   position: fixed;
   inset: 0;
@@ -365,7 +381,9 @@ label {
 </head>
 <body>
 <div class="container">
-<!-- STAFF HOME -->
+<!-- =========================
+     STAFF HOME
+========================= -->
 <div id="nameScreen">
   <div class="card center">
     <h1>Sugar Tree Okinawa</h1>
@@ -391,7 +409,9 @@ label {
     </button>
   </div>
 </div>
-<!-- STAFF ATTENDANCE -->
+<!-- =========================
+     STAFF ATTENDANCE
+========================= -->
 <div id="attendanceScreen" class="hidden">
   <div class="card center">
     <h2 id="selectedStaffName">
@@ -427,7 +447,9 @@ label {
     </button>
   </div>
 </div>
-<!-- MANAGER LOGIN -->
+<!-- =========================
+     MANAGER LOGIN
+========================= -->
 <div id="managerLoginScreen" class="hidden">
   <div class="card">
     <h2>管理者ログイン</h2>
@@ -451,7 +473,9 @@ label {
     </div>
   </div>
 </div>
-<!-- MANAGER -->
+<!-- =========================
+     MANAGER
+========================= -->
 <div id="managerScreen" class="hidden">
   <div class="card">
     <div class="manager-header">
@@ -481,7 +505,9 @@ label {
       </button>
     </div>
   </div>
-<!-- DAILY TIME CARD -->
+<!-- =========================
+     DAILY
+========================= -->
 <div id="dailyTab">
   <div class="card">
     <h3>📅 日別タイムカード</h3>
@@ -526,7 +552,9 @@ label {
     </div>
   </div>
 </div>
-<!-- PAYROLL -->
+<!-- =========================
+     PAYROLL
+========================= -->
 <div id="payrollTab" class="hidden">
   <div class="card">
     <h3>給与計算</h3>
@@ -548,7 +576,9 @@ label {
   </div>
   <div id="payrollResult"></div>
 </div>
-<!-- EMPLOYEE MANAGEMENT -->
+<!-- =========================
+     EMPLOYEES
+========================= -->
 <div id="employeesTab" class="hidden">
   <div class="card">
     <h3>スタッフ追加</h3>
@@ -575,10 +605,46 @@ label {
       読み込み中...
     </div>
   </div>
+  <!-- =========================
+       CHANGE MANAGER PIN
+  ========================= -->
+  <div class="card">
+    <h3>🔐 管理者PIN変更</h3>
+    <div class="pin-card">
+      <label>現在のPIN</label>
+      <input
+        type="password"
+        id="currentPinInput"
+        inputmode="numeric"
+        placeholder="現在のPIN">
+      <label>新しいPIN</label>
+      <input
+        type="password"
+        id="newPinInput"
+        inputmode="numeric"
+        placeholder="新しいPIN">
+      <label>新しいPIN（確認）</label>
+      <input
+        type="password"
+        id="confirmPinInput"
+        inputmode="numeric"
+        placeholder="もう一度入力">
+      <button
+        class="primary"
+        onclick="changeManagerPin()">
+        PINを変更
+      </button>
+      <div class="pin-note">
+        ※このPINは現在使用している端末のブラウザに保存されます。
+      </div>
+    </div>
+  </div>
 </div>
 </div>
 </div>
-<!-- EDIT ATTENDANCE MODAL -->
+<!-- =========================
+     EDIT ATTENDANCE MODAL
+========================= -->
 <div id="editModal" class="modal hidden">
   <div class="modal-content">
     <h3 id="editModalTitle">
@@ -618,7 +684,9 @@ label {
     </div>
   </div>
 </div>
-<!-- BULK ENTRY MODAL -->
+<!-- =========================
+     BULK ENTRY MODAL
+========================= -->
 <div id="bulkModal" class="modal hidden">
   <div class="modal-content bulk-modal-content">
     <h3>✏️ 一括勤務入力</h3>
@@ -647,7 +715,9 @@ label {
     </div>
   </div>
 </div>
-<!-- EDIT EMPLOYEE -->
+<!-- =========================
+     EDIT EMPLOYEE
+========================= -->
 <div id="employeeModal" class="modal hidden">
   <div class="modal-content">
     <h3>スタッフ編集</h3>
@@ -678,20 +748,123 @@ label {
   </div>
 </div>
 <script>
+/* =====================================================
+   SUPABASE
+===================================================== */
 const SUPABASE_URL =
   "https://yxlcnyxuziukptvtmgub.supabase.co";
 const SUPABASE_KEY =
   "sb_publishable_4p3StZjP4BQA_NE7b9oMDQ_N2DeHvn5";
-const MANAGER_PIN = "1234";
+/*
+ * 初回PIN
+ *
+ * 一度変更すると、
+ * ブラウザのlocalStorageに新しいPINが保存されます。
+ */
+const DEFAULT_MANAGER_PIN = "1234";
+const MANAGER_PIN_STORAGE_KEY =
+  "sugar_tree_manager_pin";
 let employees = [];
 let attendanceRecords = [];
 let selectedEmployee = null;
 let managerSelectedDate =
   getJapanDate();
 let payrollData = [];
-/* =========================
-   SUPABASE
-========================= */
+/* =====================================================
+   MANAGER PIN
+===================================================== */
+function getManagerPin() {
+  const savedPin =
+    localStorage.getItem(
+      MANAGER_PIN_STORAGE_KEY
+    );
+  if (savedPin) {
+    return savedPin;
+  }
+  return DEFAULT_MANAGER_PIN;
+}
+function changeManagerPin() {
+  const currentPin =
+    document.getElementById(
+      "currentPinInput"
+    ).value;
+  const newPin =
+    document.getElementById(
+      "newPinInput"
+    ).value;
+  const confirmPin =
+    document.getElementById(
+      "confirmPinInput"
+    ).value;
+  if (!currentPin) {
+    alert(
+      "現在のPINを入力してください。"
+    );
+    return;
+  }
+  if (
+    currentPin !==
+    getManagerPin()
+  ) {
+    alert(
+      "現在のPINが違います。"
+    );
+    return;
+  }
+  if (!newPin) {
+    alert(
+      "新しいPINを入力してください。"
+    );
+    return;
+  }
+  if (
+    !/^\d{4,8}$/.test(
+      newPin
+    )
+  ) {
+    alert(
+      "新しいPINは4～8桁の数字で入力してください。"
+    );
+    return;
+  }
+  if (
+    newPin !==
+    confirmPin
+  ) {
+    alert(
+      "新しいPINが一致していません。"
+    );
+    return;
+  }
+  if (
+    newPin ===
+    currentPin
+  ) {
+    alert(
+      "現在と同じPINです。"
+    );
+    return;
+  }
+  localStorage.setItem(
+    MANAGER_PIN_STORAGE_KEY,
+    newPin
+  );
+  document.getElementById(
+    "currentPinInput"
+  ).value = "";
+  document.getElementById(
+    "newPinInput"
+  ).value = "";
+  document.getElementById(
+    "confirmPinInput"
+  ).value = "";
+  alert(
+    "管理者PINを変更しました。"
+  );
+}
+/* =====================================================
+   SUPABASE REQUEST
+===================================================== */
 async function supabaseRequest(
   table,
   method = "GET",
@@ -718,7 +891,10 @@ async function supabaseRequest(
       JSON.stringify(body);
   }
   const response =
-    await fetch(url, options);
+    await fetch(
+      url,
+      options
+    );
   const text =
     await response.text();
   if (!response.ok) {
@@ -731,7 +907,8 @@ async function supabaseRequest(
       `HTTP ${response.status}`
     );
   }
-  if (!text) return [];
+  if (!text)
+    return [];
   try {
     const result =
       JSON.parse(text);
@@ -757,9 +934,9 @@ async function supabaseRequest(
     return [];
   }
 }
-/* =========================
+/* =====================================================
    VERIFY EMPLOYEE
-========================= */
+===================================================== */
 async function verifyEmployee(
   employeeId,
   expectedValues
@@ -768,7 +945,9 @@ async function verifyEmployee(
     await supabaseRequest(
       "employees",
       "GET",
-      `?select=*&id=eq.${encodeURIComponent(employeeId)}`
+      `?select=*&id=eq.${encodeURIComponent(
+        employeeId
+      )}`
     );
   if (!result.length) {
     throw new Error(
@@ -779,11 +958,17 @@ async function verifyEmployee(
     result[0];
   for (
     const key of
-    Object.keys(expectedValues)
+    Object.keys(
+      expectedValues
+    )
   ) {
     if (
-      String(employee[key]) !==
-      String(expectedValues[key])
+      String(
+        employee[key]
+      ) !==
+      String(
+        expectedValues[key]
+      )
     ) {
       throw new Error(
         `データベースの${key}が正しく更新されていません。`
@@ -792,9 +977,9 @@ async function verifyEmployee(
   }
   return employee;
 }
-/* =========================
+/* =====================================================
    JAPAN DATE / TIME
-========================= */
+===================================================== */
 function getJapanDate() {
   return new Intl.DateTimeFormat(
     "en-CA",
@@ -808,7 +993,9 @@ function getJapanDate() {
       day:
         "2-digit"
     }
-  ).format(new Date());
+  ).format(
+    new Date()
+  );
 }
 function getJapanDateTimeParts() {
   const parts =
@@ -838,15 +1025,17 @@ function getJapanDateTimeParts() {
       new Date()
     );
   const result = {};
-  parts.forEach(part => {
-    if (
-      part.type !==
-      "literal"
-    ) {
-      result[part.type] =
-        part.value;
+  parts.forEach(
+    part => {
+      if (
+        part.type !==
+        "literal"
+      ) {
+        result[part.type] =
+          part.value;
+      }
     }
-  });
+  );
   return result;
 }
 function getJapanTimeString() {
@@ -859,16 +1048,23 @@ function getJapanDateString() {
     getJapanDateTimeParts();
   return `${p.year}年${p.month}月${p.day}日`;
 }
-/* =========================
+/* =====================================================
    DATE CONVERSION
-========================= */
-function japanDateTimeToISO(value) {
-  if (!value) return null;
-  return new Date(value)
-    .toISOString();
+===================================================== */
+function japanDateTimeToISO(
+  value
+) {
+  if (!value)
+    return null;
+  return new Date(
+    value
+  ).toISOString();
 }
-function isoToJapanInput(iso) {
-  if (!iso) return "";
+function isoToJapanInput(
+  iso
+) {
+  if (!iso)
+    return "";
   const date =
     new Date(iso);
   const parts =
@@ -896,20 +1092,22 @@ function isoToJapanInput(iso) {
       date
     );
   const p = {};
-  parts.forEach(x => {
-    if (
-      x.type !==
-      "literal"
-    ) {
-      p[x.type] =
-        x.value;
+  parts.forEach(
+    x => {
+      if (
+        x.type !==
+        "literal"
+      ) {
+        p[x.type] =
+          x.value;
+      }
     }
-  });
+  );
   return `${p.year}-${p.month}-${p.day}T${p.hour}:${p.minute}`;
 }
-/* =========================
+/* =====================================================
    CLOCK
-========================= */
+===================================================== */
 function updateClock() {
   const time =
     getJapanTimeString();
@@ -937,9 +1135,9 @@ setInterval(
   updateClock,
   1000
 );
-/* =========================
+/* =====================================================
    LOAD EMPLOYEES
-========================= */
+===================================================== */
 async function loadEmployees() {
   try {
     employees =
@@ -950,7 +1148,9 @@ async function loadEmployees() {
       );
     renderStaffList();
   } catch (error) {
-    console.error(error);
+    console.error(
+      error
+    );
     document.getElementById(
       "staffList"
     ).innerHTML =
@@ -959,9 +1159,9 @@ async function loadEmployees() {
       </div>`;
   }
 }
-/* =========================
+/* =====================================================
    STAFF LIST
-========================= */
+===================================================== */
 function renderStaffList() {
   const list =
     document.getElementById(
@@ -972,7 +1172,9 @@ function renderStaffList() {
       employee =>
         employee.active === true
     );
-  if (!activeEmployees.length) {
+  if (
+    !activeEmployees.length
+  ) {
     list.innerHTML =
       `<div class="empty">
         現在スタッフが登録されていません。
@@ -1001,9 +1203,9 @@ function renderStaffList() {
     }
   );
 }
-/* =========================
-   SELECT STAFF
-========================= */
+/* =====================================================
+   SELECT EMPLOYEE
+===================================================== */
 async function selectEmployee(
   employee
 ) {
@@ -1033,9 +1235,9 @@ async function selectEmployee(
     employee.name;
   await loadTodayAttendance();
 }
-/* =========================
+/* =====================================================
    TODAY ATTENDANCE
-========================= */
+===================================================== */
 async function loadTodayAttendance() {
   if (!selectedEmployee)
     return;
@@ -1066,9 +1268,9 @@ function getCurrentAttendanceRecord() {
   }
   return attendanceRecords[0];
 }
-/* =========================
+/* =====================================================
    ATTENDANCE STATUS
-========================= */
+===================================================== */
 function updateAttendanceStatus() {
   const status =
     document.getElementById(
@@ -1124,16 +1326,26 @@ function updateAttendanceStatus() {
       本日の勤務は終了しました。
     </div>
     <div class="work-summary">
-      出勤：${formatDateTime(record.clock_in)}
+      出勤：
+      ${formatDateTime(
+        record.clock_in
+      )}
     </div>
     <div class="work-summary">
-      退勤：${formatDateTime(record.clock_out)}
+      退勤：
+      ${formatDateTime(
+        record.clock_out
+      )}
     </div>
     <div class="work-summary">
-      休憩：${record.break_minutes || 0}分
+      休憩：
+      ${record.break_minutes || 0}分
     </div>
     <div class="working-time">
-      実働：${formatWorkMinutes(minutes)}
+      実働：
+      ${formatWorkMinutes(
+        minutes
+      )}
     </div>
   `;
   clockInButton.disabled =
@@ -1141,9 +1353,9 @@ function updateAttendanceStatus() {
   clockOutButton.disabled =
     true;
 }
-/* =========================
+/* =====================================================
    CLOCK IN
-========================= */
+===================================================== */
 async function clockIn() {
   if (!selectedEmployee)
     return;
@@ -1181,9 +1393,9 @@ async function clockIn() {
     );
   }
 }
-/* =========================
+/* =====================================================
    CLOCK OUT
-========================= */
+===================================================== */
 async function clockOut() {
   const record =
     getCurrentAttendanceRecord();
@@ -1199,7 +1411,9 @@ async function clockOut() {
   )
     return;
   const breakMinutes =
-    Number(breakInput);
+    Number(
+      breakInput
+    );
   if (
     !Number.isFinite(
       breakMinutes
@@ -1231,9 +1445,9 @@ async function clockOut() {
     );
   }
 }
-/* =========================
+/* =====================================================
    WORK TIME
-========================= */
+===================================================== */
 function updateWorkingTime() {
   if (!selectedEmployee)
     return;
@@ -1332,9 +1546,9 @@ function formatDateTime(
     }
   );
 }
-/* =========================
+/* =====================================================
    BACK
-========================= */
+===================================================== */
 function backToStaffSelection() {
   selectedEmployee =
     null;
@@ -1362,9 +1576,9 @@ function backToStaffSelection() {
   );
   loadEmployees();
 }
-/* =========================
+/* =====================================================
    MANAGER LOGIN
-========================= */
+===================================================== */
 function openManagerLogin() {
   document.getElementById(
     "nameScreen"
@@ -1378,6 +1592,10 @@ function openManagerLogin() {
   );
   document.getElementById(
     "managerPinInput"
+  ).value =
+    "";
+  document.getElementById(
+    "managerPinInput"
   ).focus();
 }
 function managerLogin() {
@@ -1386,7 +1604,8 @@ function managerLogin() {
       "managerPinInput"
     ).value;
   if (
-    pin !== MANAGER_PIN
+    pin !==
+    getManagerPin()
   ) {
     alert(
       "PINが違います。"
@@ -1416,9 +1635,9 @@ function managerLogin() {
     );
   loadManagerData();
 }
-/* =========================
-   LOGOUT
-========================= */
+/* =====================================================
+   MANAGER LOGOUT
+===================================================== */
 function managerLogout() {
   document.getElementById(
     "managerScreen"
@@ -1436,9 +1655,9 @@ function managerLogout() {
   );
   loadEmployees();
 }
-/* =========================
+/* =====================================================
    MANAGER TABS
-========================= */
+===================================================== */
 function showManagerTab(
   tab
 ) {
@@ -1472,7 +1691,9 @@ function showManagerTab(
   ).classList.remove(
     "active"
   );
-  if (tab === "daily") {
+  if (
+    tab === "daily"
+  ) {
     document.getElementById(
       "dailyTab"
     ).classList.remove(
@@ -1485,7 +1706,9 @@ function showManagerTab(
     );
     loadManagerData();
   }
-  if (tab === "payroll") {
+  if (
+    tab === "payroll"
+  ) {
     document.getElementById(
       "payrollTab"
     ).classList.remove(
@@ -1498,7 +1721,9 @@ function showManagerTab(
     );
     loadPayroll();
   }
-  if (tab === "employees") {
+  if (
+    tab === "employees"
+  ) {
     document.getElementById(
       "employeesTab"
     ).classList.remove(
@@ -1512,9 +1737,9 @@ function showManagerTab(
     loadEmployeeAdmin();
   }
 }
-/* =========================
+/* =====================================================
    DATE CHANGE
-========================= */
+===================================================== */
 function changeManagerDate(
   days
 ) {
@@ -1532,20 +1757,26 @@ function changeManagerDate(
     "-" +
     String(
       date.getMonth() + 1
-    ).padStart(2,"0") +
+    ).padStart(
+      2,
+      "0"
+    ) +
     "-" +
     String(
       date.getDate()
-    ).padStart(2,"0");
+    ).padStart(
+      2,
+      "0"
+    );
   document.getElementById(
     "managerDatePicker"
   ).value =
     managerSelectedDate;
   loadManagerData();
 }
-/* =========================
+/* =====================================================
    DAILY DATA
-========================= */
+===================================================== */
 async function loadManagerData() {
   managerSelectedDate =
     document.getElementById(
@@ -1567,7 +1798,9 @@ async function loadManagerData() {
       );
     renderDailyAttendance();
   } catch (error) {
-    console.error(error);
+    console.error(
+      error
+    );
     document.getElementById(
       "dailyAttendanceList"
     ).innerHTML =
@@ -1576,23 +1809,34 @@ async function loadManagerData() {
       </div>`;
   }
 }
-/* =========================
+/* =====================================================
    DAILY DISPLAY
-========================= */
+   ★ INACTIVE EMPLOYEES ARE HIDDEN
+===================================================== */
 function renderDailyAttendance() {
   const container =
     document.getElementById(
       "dailyAttendanceList"
     );
-  if (!employees.length) {
+  /*
+   * ★ 無効スタッフを完全に除外
+   */
+  const activeEmployees =
+    employees.filter(
+      employee =>
+        employee.active === true
+    );
+  if (
+    !activeEmployees.length
+  ) {
     container.innerHTML =
       `<div class="empty">
-        スタッフが登録されていません。
+        有効なスタッフが登録されていません。
       </div>`;
     return;
   }
   container.innerHTML = "";
-  employees.forEach(
+  activeEmployees.forEach(
     employee => {
       const records =
         attendanceRecords.filter(
@@ -1604,7 +1848,12 @@ function renderDailyAttendance() {
               employee.id
             )
         );
-      if (!records.length) {
+      /*
+       * 勤務記録なし
+       */
+      if (
+        !records.length
+      ) {
         const row =
           document.createElement(
             "div"
@@ -1615,17 +1864,13 @@ function renderDailyAttendance() {
           <div class="attendance-row-header">
             <div>
               <span class="employee-name">
-                ${escapeHtml(employee.name)}
+                ${escapeHtml(
+                  employee.name
+                )}
               </span>
-              ${
-                employee.active === false
-                  ? `<span class="badge badge-inactive">
-                      無効
-                    </span>`
-                  : `<span class="badge badge-active">
-                      有効
-                    </span>`
-              }
+              <span class="badge badge-active">
+                有効
+              </span>
             </div>
             <button
               class="success small-btn"
@@ -1684,27 +1929,25 @@ function renderDailyAttendance() {
             <div class="attendance-row-header">
               <div>
                 <span class="employee-name">
-                  ${escapeHtml(employee.name)}
+                  ${escapeHtml(
+                    employee.name
+                  )}
                 </span>
-                ${
-                  employee.active === false
-                    ? `<span class="badge badge-inactive">
-                        無効
-                      </span>`
-                    : `<span class="badge badge-active">
-                        有効
-                      </span>`
-                }
+                <span class="badge badge-active">
+                  有効
+                </span>
               </div>
-              <button
-                class="secondary small-btn"
-                onclick="openEdit(
-                  '${employee.id}',
-                  '${record.id}',
-                  '${escapeJs(employee.name)}'
-                )">
-                ✏️ 編集
-              </button>
+              <div>
+                <button
+                  class="secondary small-btn"
+                  onclick="openEdit(
+                    '${employee.id}',
+                    '${record.id}',
+                    '${escapeJs(employee.name)}'
+                  )">
+                  ✏️ 編集
+                </button>
+              </div>
             </div>
             <div class="work-summary">
               🟢 出勤：
@@ -1752,6 +1995,17 @@ function renderDailyAttendance() {
                   : ""
               }
             </div>
+            <!--
+              ★ 0時間リセット
+            -->
+            <button
+              class="danger small-btn reset-button"
+              onclick="resetDailyHours(
+                '${record.id}',
+                '${escapeJs(employee.name)}'
+              )">
+              🔄 この日の勤務時間を0にリセット
+            </button>
           `;
           container.appendChild(
             row
@@ -1761,9 +2015,55 @@ function renderDailyAttendance() {
     }
   );
 }
-/* =========================
+/* =====================================================
+   RESET DAILY HOURS
+===================================================== */
+async function resetDailyHours(
+  recordId,
+  employeeName
+) {
+  const confirmed =
+    confirm(
+      `${employeeName} の ${managerSelectedDate} の勤務時間を0にリセットしますか？\n\n` +
+      `出勤・退勤時間は空欄になります。\n` +
+      `この日の勤務記録自体は削除しません。\n\n` +
+      `リセット後に正しい時間を入力できます。`
+    );
+  if (!confirmed)
+    return;
+  try {
+    await supabaseRequest(
+      "attendance",
+      "PATCH",
+      `?id=eq.${encodeURIComponent(
+        recordId
+      )}`,
+      {
+        clock_in:
+          null,
+        clock_out:
+          null,
+        break_minutes:
+          0
+      }
+    );
+    await loadManagerData();
+    alert(
+      `${employeeName} の勤務時間を0にリセットしました。`
+    );
+  } catch (error) {
+    console.error(
+      error
+    );
+    alert(
+      "リセットに失敗しました。\n" +
+      error.message
+    );
+  }
+}
+/* =====================================================
    EDIT ATTENDANCE
-========================= */
+===================================================== */
 function openEdit(
   employeeId,
   recordId,
@@ -1826,9 +2126,9 @@ function closeEditModal() {
     "hidden"
   );
 }
-/* =========================
+/* =====================================================
    SAVE EDIT
-========================= */
+===================================================== */
 async function saveEdit() {
   const employeeId =
     document.getElementById(
@@ -1902,7 +2202,9 @@ async function saveEdit() {
       await supabaseRequest(
         "attendance",
         "PATCH",
-        `?id=eq.${encodeURIComponent(recordId)}`,
+        `?id=eq.${encodeURIComponent(
+          recordId
+        )}`,
         data
       );
     } else {
@@ -1925,9 +2227,9 @@ async function saveEdit() {
     );
   }
 }
-/* =========================
+/* =====================================================
    BULK ENTRY
-========================= */
+===================================================== */
 function openBulkEntry() {
   const modal =
     document.getElementById(
@@ -1942,7 +2244,6 @@ function openBulkEntry() {
       "bulkEntryList"
     );
   container.innerHTML = "";
-  /* ★ 有効スタッフだけ */
   const activeEmployees =
     employees.filter(
       employee =>
@@ -2061,9 +2362,9 @@ function openBulkEntry() {
     "hidden"
   );
 }
-/* =========================
-   ★ BULK MODAL CLOSE
-========================= */
+/* =====================================================
+   CLOSE BULK MODAL
+===================================================== */
 function closeBulkModal() {
   const modal =
     document.getElementById(
@@ -2075,9 +2376,9 @@ function closeBulkModal() {
     );
   }
 }
-/* =========================
+/* =====================================================
    BULK SAVE
-========================= */
+===================================================== */
 async function saveBulkEntry() {
   const clockInInputs =
     document.querySelectorAll(
@@ -2113,7 +2414,6 @@ async function saveBulkEntry() {
           breakInputs[i]
             .value || 0
         );
-      /* 空欄スタッフはスキップ */
       if (!clockInTime) {
         continue;
       }
@@ -2133,14 +2433,6 @@ async function saveBulkEntry() {
         clockOutTime
           ? `${managerSelectedDate}T${clockOutTime}`
           : "";
-      /*
-       * 夜勤対応
-       *
-       * 例：
-       * 22:00 → 02:00
-       *
-       * 退勤を翌日にする
-       */
       if (
         clockOut &&
         clockOutTime <=
@@ -2160,11 +2452,17 @@ async function saveBulkEntry() {
           "-" +
           String(
             nextDay.getMonth() + 1
-          ).padStart(2,"0") +
+          ).padStart(
+            2,
+            "0"
+          ) +
           "-" +
           String(
             nextDay.getDate()
-          ).padStart(2,"0");
+          ).padStart(
+            2,
+            "0"
+          );
         clockOut =
           `${nextDate}T${clockOutTime}`;
       }
@@ -2215,7 +2513,6 @@ async function saveBulkEntry() {
       }
       savedCount++;
     }
-    /* ★ 保存成功後に閉じる */
     closeBulkModal();
     await loadManagerData();
     alert(
@@ -2231,9 +2528,9 @@ async function saveBulkEntry() {
     );
   }
 }
-/* =========================
+/* =====================================================
    EMPLOYEE ADMIN
-========================= */
+===================================================== */
 async function loadEmployeeAdmin() {
   try {
     employees =
@@ -2252,9 +2549,9 @@ async function loadEmployeeAdmin() {
       </div>`;
   }
 }
-/* =========================
+/* =====================================================
    EMPLOYEE ADMIN LIST
-========================= */
+===================================================== */
 function renderEmployeeAdminList() {
   const container =
     document.getElementById(
@@ -2358,9 +2655,9 @@ function renderEmployeeAdminList() {
     }
   );
 }
-/* =========================
+/* =====================================================
    EMPLOYEE CODE
-========================= */
+===================================================== */
 async function generateEmployeeCode() {
   const existing =
     await supabaseRequest(
@@ -2399,9 +2696,9 @@ async function generateEmployeeCode() {
     )
   );
 }
-/* =========================
+/* =====================================================
    ADD EMPLOYEE
-========================= */
+===================================================== */
 async function addEmployee() {
   const name =
     document.getElementById(
@@ -2485,9 +2782,9 @@ async function addEmployee() {
     );
   }
 }
-/* =========================
+/* =====================================================
    EDIT EMPLOYEE
-========================= */
+===================================================== */
 function openEmployeeEdit(
   employeeId
 ) {
@@ -2524,9 +2821,9 @@ function closeEmployeeModal() {
     "hidden"
   );
 }
-/* =========================
+/* =====================================================
    SAVE EMPLOYEE
-========================= */
+===================================================== */
 async function saveEmployee() {
   const id =
     document.getElementById(
@@ -2563,7 +2860,9 @@ async function saveEmployee() {
     await supabaseRequest(
       "employees",
       "PATCH",
-      `?id=eq.${encodeURIComponent(id)}`,
+      `?id=eq.${encodeURIComponent(
+        id
+      )}`,
       {
         name:
           name,
@@ -2595,9 +2894,9 @@ async function saveEmployee() {
     );
   }
 }
-/* =========================
-   DEACTIVATE
-========================= */
+/* =====================================================
+   DEACTIVATE EMPLOYEE
+===================================================== */
 async function deactivateEmployee(
   employeeId
 ) {
@@ -2613,6 +2912,7 @@ async function deactivateEmployee(
     !confirm(
       `${employee.name} を無効化しますか？\n\n` +
       `出勤画面から非表示になります。\n` +
+      `勤務状況からも非表示になります。\n` +
       `過去の勤務記録は残ります。`
     )
   )
@@ -2648,9 +2948,9 @@ async function deactivateEmployee(
     );
   }
 }
-/* =========================
-   REACTIVATE
-========================= */
+/* =====================================================
+   REACTIVATE EMPLOYEE
+===================================================== */
 async function reactivateEmployee(
   employeeId
 ) {
@@ -2693,9 +2993,9 @@ async function reactivateEmployee(
     );
   }
 }
-/* =========================
+/* =====================================================
    PAYROLL
-========================= */
+===================================================== */
 async function loadPayroll() {
   const month =
     document.getElementById(
@@ -2801,9 +3101,9 @@ async function loadPayroll() {
       </div>`;
   }
 }
-/* =========================
+/* =====================================================
    NEXT MONTH
-========================= */
+===================================================== */
 function getNextMonth(
   month
 ) {
@@ -2825,13 +3125,16 @@ function getNextMonth(
     "-" +
     String(
       date.getMonth() + 1
-    ).padStart(2,"0") +
+    ).padStart(
+      2,
+      "0"
+    ) +
     "-01"
   );
 }
-/* =========================
+/* =====================================================
    PAYROLL DISPLAY
-========================= */
+===================================================== */
 function renderPayroll(
   month,
   totalPayroll
@@ -2954,9 +3257,9 @@ function renderPayroll(
   container.innerHTML =
     html;
 }
-/* =========================
+/* =====================================================
    DAILY CSV
-========================= */
+===================================================== */
 function exportDailyCSV() {
   if (
     !attendanceRecords.length
@@ -2978,7 +3281,13 @@ function exportDailyCSV() {
               record.employee_id
             )
         );
-      if (!employee)
+      /*
+       * ★ 無効スタッフはCSVにも出さない
+       */
+      if (
+        !employee ||
+        employee.active !== true
+      )
         return;
       const minutes =
         record.clock_out
@@ -3020,7 +3329,9 @@ function exportDailyCSV() {
         hourlyRate,
         pay
       ]
-        .map(csvEscape)
+        .map(
+          csvEscape
+        )
         .join(",") +
         "\n";
     }
@@ -3030,9 +3341,9 @@ function exportDailyCSV() {
     `勤務管理_${managerSelectedDate}.csv`
   );
 }
-/* =========================
+/* =====================================================
    PAYROLL CSV
-========================= */
+===================================================== */
 function exportPayrollCSV() {
   if (
     !payrollData.length
@@ -3060,7 +3371,9 @@ function exportPayrollCSV() {
         item.estimatedPay,
         item.incompleteDays
       ]
-        .map(csvEscape)
+        .map(
+          csvEscape
+        )
         .join(",") +
         "\n";
     }
@@ -3070,9 +3383,9 @@ function exportPayrollCSV() {
     `給与計算_${month}.csv`
   );
 }
-/* =========================
+/* =====================================================
    CSV
-========================= */
+===================================================== */
 function csvEscape(
   value
 ) {
@@ -3123,9 +3436,9 @@ function downloadCSV(
     url
   );
 }
-/* =========================
-   SECURITY / HTML
-========================= */
+/* =====================================================
+   ESCAPE
+===================================================== */
 function escapeHtml(
   value
 ) {
@@ -3176,9 +3489,9 @@ function escapeJs(
       ""
     );
 }
-/* =========================
+/* =====================================================
    INITIALIZE
-========================= */
+===================================================== */
 async function initializeApp() {
   updateClock();
   await loadEmployees();
